@@ -1,0 +1,13 @@
+'menu': [
+  {
+    'label': 'Help'
+    'submenu': [
+      { 'label': 'Give Feedback', 'command': 'feedback:toggle' }
+      { type: 'separator' }
+    ]
+  }
+]
+
+'context-menu':
+  '.overlayer':
+    'Give Feedback': 'feedback:toggle'

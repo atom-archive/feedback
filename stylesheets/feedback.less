@@ -1,0 +1,36 @@
+@import "ui-variables";
+
+.feedback {
+  h1 {
+    padding: 0;
+    margin: 0;
+    padding-bottom: @component-padding;
+  }
+
+  textarea {
+    width: 100%;
+    margin-bottom: @component-padding;
+    background-color: lighten(@input-background-color, 5%);
+    border: 1px solid @input-border-color;
+    text-color: @text-color;
+  }
+
+  .screenshot {
+    margin-bottom: @component-padding;
+
+    label {
+      margin-left: @component-padding;
+    }
+  }
+
+  video {
+    width: 200px;
+    height: 200px;
+    background-color: red;
+  }
+
+  button {
+    width: 100%;
+    font-size: 150%
+  }
+}
