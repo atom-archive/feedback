@@ -22,7 +22,6 @@ class FeedbackView extends View
           @div class: 'screenshot', =>
             @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox'
             @label for: 'attach-screenshot', "Attach screenshot"
-            @span outlet: 'screenshotError', class: 'screenshot-error'
             @img outlet: 'screenshotImage'
           @button outlet: 'sendButton', class: 'btn', 'send'
           @div outlet: 'sendingStatus', class: 'sending-status', "sending"
@@ -36,7 +35,7 @@ class FeedbackView extends View
 
 
   initialize: ->
-    rootView.on 'core:cancel', => @detach()
+    atom.rootView.on 'core:cancel', => @detach()
     @attachScreenshot.on 'click', => @toggleScreenshot()
     @attachDebugInfo.on 'click', => @toggleDebugInfo()
     @sendButton.on 'click', => @send()
@@ -44,7 +43,7 @@ class FeedbackView extends View
     @toggleScreenshot()
     @toggleDebugInfo()
 
-    rootView.prepend(this)
+    atom.rootView.prepend(this)
     @textarea.focus()
 
   send: ->
@@ -57,7 +56,7 @@ class FeedbackView extends View
       return
 
     failureMessage = null
-    x = Q("start") # Used to catch errors in uploadScreenshot
+    Q("start") # Used to catch errors in uploadScreenshot
       .then =>
         @uploadScreenshot()
       .then =>
@@ -140,27 +139,27 @@ class FeedbackView extends View
 
   toggleScreenshot: ->
     enabled = @attachScreenshot.is(":checked")
-    @screenshotError.hide()
     @screenshotImage.hide()
     @screenshot = null
     return unless enabled
 
     @hide()
-    @captureScreenshot()
-      .fail (error) =>
-        @screenshotError.show()
-        @screenshotError.text "(Failed to take screenshot)"
+    Q("start")
+      .then => @captureScreenshot()
       .then (data) =>
+        window.x = data
         @screenshot = data
         @screenshotImage.show()
         @screenshotImage[0].src = "data:image/png;base64," + @screenshot.toString('base64')
-      .finally =>
+      .then =>
         @show()
+      .fail (error) =>
+        @showError.show("Failed to take screenshot")
 
   captureScreenshot: (callback) ->
-    filepath = temp.openSync().path
-    Q.nfcall(exec, "screencapture -x #{filepath}").then ->
-      Q.nfcall(fs.readFile, filepath)
+    deferred = Q.defer()
+    atom.getCurrentWindow().capturePage (data) -> deferred.resolve(data)
+    deferred.promise
 
   toggleDebugInfo: ->
     enabled = @attachDebugInfo.is(":checked")
