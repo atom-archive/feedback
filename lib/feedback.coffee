@@ -7,4 +7,4 @@ module.exports =
     @feedbackView = new FeedbackView
 
   deactivate: ->
-    @feedbackView.destroy()
+    @feedbackView.detach()

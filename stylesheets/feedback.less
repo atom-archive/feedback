@@ -4,7 +4,7 @@
   h1 {
     padding: 0;
     margin: 0;
-    padding-bottom: @component-padding;
+    margin-bottom: @component-padding;
   }
 
   textarea {
@@ -12,25 +12,51 @@
     margin-bottom: @component-padding;
     background-color: lighten(@input-background-color, 5%);
     border: 1px solid @input-border-color;
-    text-color: @text-color;
+    color: @text-color;
   }
+
+  label {
+    margin-left: @component-padding;
+  }
+
 
   .screenshot {
     margin-bottom: @component-padding;
 
-    label {
+    img {
+      display: none;
+      width: 100%;
+    }
+
+    .screenshot-error {
+      color: @text-color-error;
       margin-left: @component-padding;
+      display: none;
     }
   }
 
-  video {
-    width: 200px;
-    height: 200px;
-    background-color: red;
+  .sending-status {
+    margin-top: @component-padding;
+    display: none;
+  }
+
+  .sending-error {
+    margin-top: @component-padding;
+    display: none;
+    font-size: 125%;
+    color: @text-color-error;
   }
 
   button {
     width: 100%;
     font-size: 150%
+  }
+
+  .output {
+    display: none;
+
+    h1 {
+      color: @text-color-success;
+    }
   }
 }
