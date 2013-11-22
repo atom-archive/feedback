@@ -60,8 +60,6 @@ class FeedbackView extends View
       .then =>
         @uploadScreenshot()
       .then =>
-        @uploadDebugInfo(arguments...)
-      .then =>
         @createIssue(arguments...)
       .then (url) =>
         @find('.input').hide()
@@ -90,21 +88,6 @@ class FeedbackView extends View
     @ajax(ajaxOptions).then ({content}) ->
       {imageUrl: content.html_url}
 
-  uploadDebugInfo: ({imageUrl}={})->
-    return Q({imageUrl}) unless @debugInfo
-
-    guid = Guid.raw()
-    json = JSON.stringify(@debugInfo, null, 2)
-    ajaxOptions =
-      url: "https://api.github.com/repos/atom/feedback-storage/contents/debug-info-#{guid}.json"
-      type: 'PUT'
-      data:
-        message: "Add feedback debug info (#{guid})"
-        content: new Buffer(json).toString('base64')
-
-    @ajax(ajaxOptions).then ({content}) ->
-      {imageUrl, debugInfoUrl: content.html_url}
-
   createIssue: ({imageUrl, debugInfoUrl}={}) ->
     data =
       title: @textarea.val()[0..50]
@@ -118,7 +101,7 @@ class FeedbackView extends View
       """
 
     data.body += "\nScreenshot: [screenshot](#{imageUrl})" if imageUrl?
-    data.body += "\nDebug Info: [debug info](#{debugInfoUrl})" if debugInfoUrl?
+    data.body += "\nDebug Info:\n```json\n#{@debugInfo}\n```" if @debugInfo?
 
     ajaxOptions =
       url: 'https://api.github.com/repos/atom/feedback-storage/issues'
@@ -164,13 +147,13 @@ class FeedbackView extends View
   toggleDebugInfo: ->
     enabled = @attachDebugInfo.is(":checked")
     if enabled
-      @debugInfo = @captureDebugInfo()
+      @debugInfo = JSON.stringify(@captureDebugInfo(), null, 2)
     else
       @debugInfo = null
 
   captureDebugInfo: ->
     activeView = atom.rootView.getActiveView()
-    return {} unless activeView.firstRenderedScreenRow?
+    return {} unless activeView?.firstRenderedScreenRow?
     editor = activeView
 
     renderedLines = _.map editor.renderedLines.find('.line'), (el, index) -> "#{editor.firstRenderedScreenRow + index}: #{el.innerText}"
