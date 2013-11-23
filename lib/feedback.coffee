@@ -1,10 +1,16 @@
-FeedbackView = require './feedback-view'
+FeedbackStatusView = require './feedback-status-view'
 
 module.exports =
-  feedbackView: null
-
   activate: ->
-    @feedbackView = new FeedbackView
+    @addFeedbackView()
 
   deactivate: ->
-    @feedbackView.detach()
+    @feedbackStatusView.detach()
+
+  addFeedbackView: ->
+    statusBarRight = atom.rootView.find('.status-bar-right')
+    if statusBarRight.length == 0
+      setTimeout((=> @addFeedbackView()), 100)
+    else
+      @feedbackStatusView = new FeedbackStatusView()
+      statusBarRight.append(@feedbackStatusView)

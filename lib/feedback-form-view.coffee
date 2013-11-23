@@ -9,7 +9,7 @@ Guid = require 'guid'
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
 
 module.exports =
-class FeedbackView extends View
+class FeedbackFormView extends View
   @content: ->
     @div class: 'feedback overlay from-top', =>
       @div class: 'input', =>
