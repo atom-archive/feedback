@@ -24,7 +24,8 @@ class FeedbackFormView extends View
             @label for: 'attach-screenshot', "Attach screenshot"
             @img outlet: 'screenshotImage'
           @button outlet: 'sendButton', class: 'btn', 'send'
-          @div outlet: 'sendingStatus', class: 'sending-status', "sending"
+          @progress outlet: 'sendingStatus', class: 'sending-status inline-block', max: '100'
+
           @div outlet: 'sendingError', class: 'sending-error'
 
       @div tabindex: -1, class: 'output', =>
@@ -50,6 +51,7 @@ class FeedbackFormView extends View
     @sendButton.disable()
     @sendingStatus.show()
     @sendingError.hide()
+    @sendingStatus.attr('value', 0)
 
     unless @textarea.val()
       @showError("You forgot to include your feedback")
@@ -59,8 +61,10 @@ class FeedbackFormView extends View
     Q("start") # Used to catch errors in uploadScreenshot
       .then =>
         @uploadScreenshot()
+        @sendingStatus.attr('value', 50)
       .then =>
         @createIssue(arguments...)
+        @sendingStatus.attr('value', 100)
       .then (url) =>
         @find('.input').hide()
         @find('.output').show().focus().on 'blur', => @detach()
