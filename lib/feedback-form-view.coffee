@@ -33,9 +33,8 @@ class FeedbackFormView extends View
       @div tabindex: -1, class: 'output', =>
         @h1 "Thanks for the feedback!"
         @div =>
-          @span "We created an issue that you can follow at "
+          @span "An issue was created "
           @a outlet: 'issueLink', href:""
-
 
   initialize: ->
     atom.rootView.on 'core:cancel', => @detach()
