@@ -12,6 +12,8 @@ module.exports =
 class FeedbackFormView extends View
   @content: ->
     @div class: 'feedback overlay from-top', =>
+      @div class: 'screenshot-status', =>
+        @span class: 'text-info', 'Taking screenshot.'
       @div class: 'input', =>
         @h1 "Send us feedback"
         @div class: 'inset-panel', =>
@@ -130,22 +132,25 @@ class FeedbackFormView extends View
     @screenshot = null
     return unless enabled
 
-    @hide()
     Q("start")
-      .then => @captureScreenshot()
+      .then =>
+        @captureScreenshot()
       .then (data) =>
-        window.x = data
         @screenshot = data
         @screenshotImage.show()
         @screenshotImage[0].src = "data:image/png;base64," + @screenshot.toString('base64')
-      .then =>
-        @show()
       .fail (error) =>
         @showError.show("Failed to take screenshot")
 
   captureScreenshot: (callback) ->
     deferred = Q.defer()
-    atom.getCurrentWindow().capturePage (data) -> deferred.resolve(data)
+    $('.screenshot-status').show()
+    $('.input').hide()
+    process.nextTick =>
+      atom.getCurrentWindow().capturePage (data) =>
+        $('.screenshot-status').hide()
+        $('.input').show()
+        deferred.resolve(data)
     deferred.promise
 
   toggleDebugInfo: ->
