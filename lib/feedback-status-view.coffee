@@ -5,13 +5,23 @@ module.exports =
 class FeedbackStatusView extends View
   @content: ->
     @div class: 'feedback-status inline-block', =>
-     @span outlet: 'feedback', type: 'button', class: 'icon icon-zap text-error'
+     @span outlet: 'feedbackButton', type: 'button', class: 'icon icon-zap text-error'
 
   initialize: (firstRun) ->
-    @feedback.setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
-    if not firstRun?
-      setTimeout((=> @feedback.tooltip('show')), 1000)
-      setTimeout((=> @feedback.tooltip('hide')), 10000)
+    @feedbackButton.on 'click', => new FeedbackFormView()
+    @feedbackButton.setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
+    @attach()
 
-    @feedback.on 'click', =>
-      new FeedbackFormView()
+  showTooltip: ->
+    if not firstRun?
+      @feedbackButton.tooltip('show')
+      $(window).one 'click', => @feedbackButton.tooltip('hide')
+      atom.rootView.one 'core:cancel', => @feedbackButton.tooltip('hide')
+
+  attach: ->
+    statusBarRight = atom.rootView.find('.status-bar-right')
+    if statusBarRight.length == 0
+      setTimeout((=> @attach()), 100)
+    else
+      statusBarRight.append(this)
+      setTimeout((=> @showTooltip()), 1000)
