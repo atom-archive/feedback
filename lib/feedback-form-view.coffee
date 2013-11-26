@@ -109,7 +109,7 @@ class FeedbackFormView extends View
     data.body += "\nDebug Info:\n```json\n#{@debugInfo}\n```" if @debugInfo?
 
     options =
-      url: 'https://api.github.com/repos/atom/feedback/issues'
+      url: 'https://api.github.com/repos/atom/atom/issues'
       method: "POST"
       json: true
       body: JSON.stringify(data)
