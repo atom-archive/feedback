@@ -24,7 +24,7 @@ class FeedbackFormView extends View
           @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
 
           @div class: 'screenshot', =>
-            @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox', checked: true
+            @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox'
             @label for: 'attach-screenshot', "Attach screenshot"
             @img outlet: 'screenshotImage'
           @button outlet: 'sendButton', class: 'btn', 'send'
@@ -40,12 +40,9 @@ class FeedbackFormView extends View
 
   initialize: ->
     atom.rootView.on 'core:cancel', => @detach()
-    @attachScreenshot.on 'click', => @toggleScreenshot()
-    @attachDebugInfo.on 'click', => @toggleDebugInfo()
+    @attachScreenshot.on 'click', => @updateScreenshot()
+    @attachDebugInfo.on 'click', => @updateDebugInfo()
     @sendButton.on 'click', => @send()
-
-    @toggleScreenshot()
-    @toggleDebugInfo()
 
     atom.rootView.prepend(this)
     @textarea.focus()
@@ -66,7 +63,6 @@ class FeedbackFormView extends View
         @sendingStatus.attr('value', 50)
         @uploadScreenshot()
       .then =>
-        console.log "DONE"
         @sendingStatus.attr('value', 100)
         @createIssue(arguments...)
       .then (url) =>
@@ -138,7 +134,7 @@ class FeedbackFormView extends View
 
     deferred.promise
 
-  toggleScreenshot: ->
+  updateScreenshot: ->
     enabled = @attachScreenshot.is(":checked")
     @screenshotImage.hide()
     @screenshot = null
@@ -165,7 +161,7 @@ class FeedbackFormView extends View
         deferred.resolve(data)
     deferred.promise
 
-  toggleDebugInfo: ->
+  updateDebugInfo: ->
     enabled = @attachDebugInfo.is(":checked")
     if enabled
       @debugInfo = JSON.stringify(@captureDebugInfo(), null, 2)
