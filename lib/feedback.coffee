@@ -2,10 +2,7 @@ FeedbackStatusView = require './feedback-status-view'
 
 module.exports =
   activate: ->
-    @addFeedbackView()
+    @feedbackStatusView = new FeedbackStatusView()
 
   deactivate: ->
     @feedbackStatusView.detach()
-
-  addFeedbackView: ->
-    new FeedbackStatusView()

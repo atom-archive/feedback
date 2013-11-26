@@ -7,8 +7,7 @@ class FeedbackStatusView extends View
     @div class: 'feedback-status inline-block', =>
      @span outlet: 'feedbackButton', type: 'button', class: 'icon icon-zap text-error'
 
-  initialize: ({@previouslyRun}) ->
-    console.log @previouslyRun
+  initialize: ->
     @feedbackButton.on 'click', => new FeedbackFormView()
     @feedbackButton.setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
     @attach()
@@ -16,6 +15,9 @@ class FeedbackStatusView extends View
   attach: ->
     statusBarRight = atom.rootView.find('.status-bar-right')
     if statusBarRight.length == 0
-      setTimeout((=> @attach()), 100)
+      setTimeout((=> @attach()), 100) unless @detached
     else
       statusBarRight.append(this)
+
+  detach: ->
+    @detached = true
