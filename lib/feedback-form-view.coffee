@@ -93,7 +93,7 @@ class FeedbackFormView extends View
 
     @requestViaPromise(options).then ({content}) => content.html_url
 
-  createIssue: ({imageUrl, debugInfoUrl}={}) ->
+  createIssue: (imageUrl) ->
     data =
       title: @textarea.val()[0..50]
       labels: 'feedback'
@@ -109,12 +109,12 @@ class FeedbackFormView extends View
     data.body += "\nDebug Info:\n```json\n#{@debugInfo}\n```" if @debugInfo?
 
     options =
-      url: 'https://api.github.com/repos/atom/feedback-storage/issues'
+      url: 'https://api.github.com/repos/atom/feedback/issues'
       method: "POST"
       json: true
-      data: JSON.stringify(data)
+      body: JSON.stringify(data)
 
-    @requestViaPromise(options).then ({html_url}) => html_url
+    @requestViaPromise(options).then ({html_url}={}) => html_url
 
   requestViaPromise: (options) ->
     options.headers ?= {}
