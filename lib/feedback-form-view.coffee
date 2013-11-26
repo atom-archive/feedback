@@ -56,10 +56,9 @@ class FeedbackFormView extends View
     @sendingError.hide()
     @sendingStatus.attr('value', 0)
 
-    # unless @textarea.val()
-    #   @showError("You forgot to include your feedback")
-    #   return
-
+    unless @textarea.val()
+      @showError("You forgot to include your feedback")
+      return
 
     failureMessage = null
     Q("start") # Used to catch errors in uploadScreenshot
@@ -69,7 +68,7 @@ class FeedbackFormView extends View
       .then =>
         console.log "DONE"
         @sendingStatus.attr('value', 100)
-        # @createIssue(arguments...)
+        @createIssue(arguments...)
       .then (url) =>
         @find('.input').hide()
         @find('.output').show().focus().on 'blur', => @detach()
@@ -87,18 +86,16 @@ class FeedbackFormView extends View
   uploadScreenshot: ->
     return Q() unless @screenshot
 
+    guid = Guid.raw()
     options =
-      url: "https://uploads.github.com/assets?name=issue.png"
-      method: "POST"
-      body: @screenshot
-      # json: true
-      headers:
-        'Content-Type': 'image/png'
+      url: "https://api.github.com/repos/atom/feedback-storage/contents/image-#{guid}.png"
+      method: 'PUT'
+      json: true
+      body:
+        message: "Add image (#{guid})"
+        content: @screenshot.toString('base64')
 
-    @requestViaPromise(options).then ({guid, id}) =>
-      console.log "SUCCESS", arguments
-      console.log "https://f.cloud.github.com/assets/#{AtomBotUserId}/#{id}/#{guid}.png"
-      "https://f.cloud.github.com/assets/#{AtomBotUserId}/#{id}/#{guid}.png"
+    @requestViaPromise(options).then ({content}) => content.html_url
 
   createIssue: ({imageUrl, debugInfoUrl}={}) ->
     options =
@@ -125,6 +122,7 @@ class FeedbackFormView extends View
   requestViaPromise: (options) ->
     options.headers ?= {}
     options.headers['Authorization'] = "token #{AtomBotToken}"
+    options.headers['User-Agent'] = "Atom"
 
     deferred = Q.defer()
     request options, (error, response, body) =>
