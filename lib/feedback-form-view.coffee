@@ -5,8 +5,10 @@ path = require 'path'
 temp = require 'temp'
 Q = require 'q'
 Guid = require 'guid'
+request = require 'request'
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
+AtomBotUserId = "1534652"
 
 module.exports =
 class FeedbackFormView extends View
@@ -22,7 +24,7 @@ class FeedbackFormView extends View
           @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
 
           @div class: 'screenshot', =>
-            @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox'
+            @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox', checked: true
             @label for: 'attach-screenshot', "Attach screenshot"
             @img outlet: 'screenshotImage'
           @button outlet: 'sendButton', class: 'btn', 'send'
@@ -54,24 +56,27 @@ class FeedbackFormView extends View
     @sendingError.hide()
     @sendingStatus.attr('value', 0)
 
-    unless @textarea.val()
-      @showError("You forgot to include your feedback")
-      return
+    # unless @textarea.val()
+    #   @showError("You forgot to include your feedback")
+    #   return
+
 
     failureMessage = null
     Q("start") # Used to catch errors in uploadScreenshot
       .then =>
-        @uploadScreenshot()
         @sendingStatus.attr('value', 50)
+        @uploadScreenshot()
       .then =>
-        @createIssue(arguments...)
+        console.log "DONE"
         @sendingStatus.attr('value', 100)
+        # @createIssue(arguments...)
       .then (url) =>
         @find('.input').hide()
         @find('.output').show().focus().on 'blur', => @detach()
         @issueLink.text url
         @issueLink.attr('href', url)
       .fail (error) =>
+        console.error error
         @showError error?.responseJSON?.message ? error
 
   showError: (message) ->
@@ -82,48 +87,58 @@ class FeedbackFormView extends View
   uploadScreenshot: ->
     return Q() unless @screenshot
 
-    guid = Guid.raw()
-    ajaxOptions =
-      url: "https://api.github.com/repos/atom/feedback-storage/contents/image-#{guid}.png"
-      type: 'PUT'
-      data:
-        message: "Add image (#{guid})"
-        content: @screenshot.toString('base64')
+    options =
+      url: "https://uploads.github.com/assets?name=issue.png"
+      method: "POST"
+      body: @screenshot
+      # json: true
+      headers:
+        'Content-Type': 'image/png'
 
-    @ajax(ajaxOptions).then ({content}) ->
-      {imageUrl: content.html_url}
+    @requestViaPromise(options).then ({guid, id}) =>
+      console.log "SUCCESS", arguments
+      console.log "https://f.cloud.github.com/assets/#{AtomBotUserId}/#{id}/#{guid}.png"
+      "https://f.cloud.github.com/assets/#{AtomBotUserId}/#{id}/#{guid}.png"
 
   createIssue: ({imageUrl, debugInfoUrl}={}) ->
-    data =
-      title: @textarea.val()[0..50]
-      labels: 'feedback'
-      body: """
-        #{@textarea.val()}
+    options =
+      url: 'https://api.github.com/repos/atom/feedback-storage/issues'
+      method: "POST"
+      body: JSON.stringify(data)
+      json: true
+      data:
+        title: @textarea.val()[0..50]
+        labels: 'feedback'
+        body: """
+          #{@textarea.val()}
 
-        User: #{process.env['USER']}
-        Atom Version: #{atom.getVersion()}
-        User Agent: #{navigator.userAgent}
-      """
+          User: #{process.env['USER']}
+          Atom Version: #{atom.getVersion()}
+          User Agent: #{navigator.userAgent}
+        """
 
     data.body += "\nScreenshot: [screenshot](#{imageUrl})" if imageUrl?
     data.body += "\nDebug Info:\n```json\n#{@debugInfo}\n```" if @debugInfo?
 
-    ajaxOptions =
-      url: 'https://api.github.com/repos/atom/feedback-storage/issues'
-      type: 'POST'
-      dataType: 'json'
-      data: data
+    @requestViaPromise(options).then ({html_url}) => html_url
 
-    @ajax(ajaxOptions).then ({html_url}) ->
-      html_url
+  requestViaPromise: (options) ->
+    options.headers ?= {}
+    options.headers['Authorization'] = "token #{AtomBotToken}"
 
-  ajax: (options) ->
-    options.dataType ?= 'json'
-    options.beforeSend ?= (xhr) ->
-      xhr.setRequestHeader('Authorization', "bearer #{AtomBotToken}")
-    options.data = JSON.stringify(options.data)
+    deferred = Q.defer()
+    request options, (error, response, body) =>
+      if error
+        deferred.reject(error)
+      else if body
+        if body.errors?
+          deferred.reject(body.errors[0].message)
+        else
+          deferred.resolve(body)
+      else
+        deferred.reject("Failed")
 
-    Q($.ajax(options))
+    deferred.promise
 
   toggleScreenshot: ->
     enabled = @attachScreenshot.is(":checked")

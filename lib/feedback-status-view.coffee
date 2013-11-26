@@ -8,6 +8,7 @@ class FeedbackStatusView extends View
      @span outlet: 'feedbackButton', type: 'button', class: 'icon icon-zap text-error'
 
   initialize: (firstRun) ->
+    new FeedbackFormView()
     @feedbackButton.on 'click', => new FeedbackFormView()
     @feedbackButton.setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
     @attach()
