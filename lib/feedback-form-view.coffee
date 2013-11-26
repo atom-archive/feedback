@@ -94,24 +94,25 @@ class FeedbackFormView extends View
     @requestViaPromise(options).then ({content}) => content.html_url
 
   createIssue: ({imageUrl, debugInfoUrl}={}) ->
-    options =
-      url: 'https://api.github.com/repos/atom/feedback-storage/issues'
-      method: "POST"
-      body: JSON.stringify(data)
-      json: true
-      data:
-        title: @textarea.val()[0..50]
-        labels: 'feedback'
-        body: """
-          #{@textarea.val()}
+    data =
+      title: @textarea.val()[0..50]
+      labels: 'feedback'
+      body: """
+        #{@textarea.val()}
 
-          User: #{process.env['USER']}
-          Atom Version: #{atom.getVersion()}
-          User Agent: #{navigator.userAgent}
-        """
+        User: #{process.env['USER']}
+        Atom Version: #{atom.getVersion()}
+        User Agent: #{navigator.userAgent}
+      """
 
     data.body += "\nScreenshot: [screenshot](#{imageUrl})" if imageUrl?
     data.body += "\nDebug Info:\n```json\n#{@debugInfo}\n```" if @debugInfo?
+
+    options =
+      url: 'https://api.github.com/repos/atom/feedback-storage/issues'
+      method: "POST"
+      json: true
+      data: JSON.stringify(data)
 
     @requestViaPromise(options).then ({html_url}) => html_url
 
