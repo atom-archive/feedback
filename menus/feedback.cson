@@ -2,12 +2,8 @@
   {
     'label': 'Help'
     'submenu': [
-      { 'label': 'Give Feedback', 'command': 'feedback:toggle' }
+      { 'label': 'Feedback', 'command': 'feedback:report' }
       { type: 'separator' }
     ]
   }
 ]
-
-'context-menu':
-  '.overlayer':
-    'Give Feedback': 'feedback:toggle'
