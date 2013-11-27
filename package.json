@@ -1,7 +1,7 @@
 {
   "name": "feedback",
   "main": "./lib/feedback",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Popup form for user feedback",
   "repository": {
