@@ -13,7 +13,7 @@ class FeedbackStatusView extends View
     @attach()
 
   attach: ->
-    statusBarRight = atom.rootView.find('.status-bar-right')
+    statusBarRight = atom.workspaceView.find('.status-bar-right')
     if statusBarRight.length == 0
       setTimeout((=> @attach()), 100) unless @detached
     else

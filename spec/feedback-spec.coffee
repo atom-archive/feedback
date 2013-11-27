@@ -1,4 +1,4 @@
-{$, RootView} = require 'atom'
+{$, WorkspaceView} = require 'atom'
 Q = require 'q'
 FeedbackFormView = require '../lib/feedback-form-view'
 
@@ -6,12 +6,12 @@ describe "Feedback", ->
   form = null
 
   beforeEach ->
-    atom.rootView = new RootView
+    atom.workspaceView = new WorkspaceView
     atom.packages.activatePackage('feedback')
     form = new FeedbackFormView
 
   it "displays the feedback form", ->
-    expect(atom.rootView.find('.feedback')).toExist()
+    expect(atom.workspaceView.find('.feedback')).toExist()
 
   describe "When there is no feedback text", ->
     it "displays an error", ->

@@ -39,12 +39,12 @@ class FeedbackFormView extends View
           @a outlet: 'issueLink', href:""
 
   initialize: ->
-    atom.rootView.on 'core:cancel', => @detach()
+    atom.workspaceView.on 'core:cancel', => @detach()
     @attachScreenshot.on 'click', => @updateScreenshot()
     @attachDebugInfo.on 'click', => @updateDebugInfo()
     @sendButton.on 'click', => @send()
 
-    atom.rootView.prepend(this)
+    atom.workspaceView.prepend(this)
     @textarea.focus()
 
   send: ->
@@ -170,7 +170,7 @@ class FeedbackFormView extends View
       @debugInfo = null
 
   captureDebugInfo: ->
-    activeView = atom.rootView.getActiveView()
+    activeView = atom.workspaceView.getActiveView()
     return {} unless activeView?.firstRenderedScreenRow?
     editor = activeView
 
