@@ -9,9 +9,24 @@ describe "Feedback", ->
     atom.workspaceView = new WorkspaceView
     atom.packages.activatePackage('feedback')
     form = new FeedbackFormView
+    spyOn(form, 'createIssue').andReturn(Q("dumbledore-url"))
+
 
   it "displays the feedback form", ->
     expect(atom.workspaceView.find('.feedback')).toExist()
+
+  it 'remembers the user email', ->
+    expect(form.email.text()).toBe ''
+    form.feedbackText.text('pacman is evil')
+    form.email.text("blinky@pacman.com")
+
+    waitsForPromise ->
+      form.send()
+
+    runs ->
+      form = new FeedbackFormView
+      expect(form.email.text()).toBe 'blinky@pacman.com'
+
 
   describe "When there is no feedback text", ->
     it "displays an error", ->
@@ -21,11 +36,9 @@ describe "Feedback", ->
 
   describe "When there is feedback text", ->
     beforeEach ->
-      form.textarea.text("pacman")
+      form.feedbackText.text("pacman")
 
     it "posts feedback", ->
-      spyOn(form, 'createIssue').andReturn(Q("dumbledore-url"))
-
       waitsForPromise ->
         form.send()
 
@@ -39,8 +52,6 @@ describe "Feedback", ->
         spyOn(form, 'requestViaPromise').andCallThrough()
 
       it "posts feedback that includes the screenshot", ->
-        spyOn(form, 'createIssue').andReturn(Q("dumbledore-url"))
-
         waitsForPromise ->
           form.attachScreenshot.click()
           form.updateScreenshot()

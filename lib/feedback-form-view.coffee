@@ -16,11 +16,13 @@ class FeedbackFormView extends View
     @div class: 'feedback overlay from-top', =>
       @div class: 'screenshot-status', =>
         @span class: 'text-info', 'Taking screenshot.'
+
       @div class: 'input', =>
         @h1 "Send us feedback"
         @div class: 'inset-panel', =>
-          @textarea outlet: 'textarea', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
-          @input outlet: 'attachDebugInfo', id: 'attach-debug-info', type: 'checkbox'
+          @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
+          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
+          @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
           @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
 
           @div class: 'screenshot', =>
@@ -44,8 +46,9 @@ class FeedbackFormView extends View
     @attachDebugInfo.on 'click', => @updateDebugInfo()
     @sendButton.on 'click', => @send()
 
+    @email.val atom.config.get('feedback.email')
     atom.workspaceView.prepend(this)
-    @textarea.focus()
+    @feedbackText.focus()
 
   send: ->
     @sendButton.disable()
@@ -53,7 +56,7 @@ class FeedbackFormView extends View
     @sendingError.hide()
     @sendingStatus.attr('value', 0)
 
-    unless @textarea.val()
+    unless @feedbackText.val()
       @showError("You forgot to include your feedback")
       return
 
@@ -70,6 +73,7 @@ class FeedbackFormView extends View
         @find('.output').show().focus().on 'blur', => @detach()
         @issueLink.text url
         @issueLink.attr('href', url)
+        atom.config.set('feedback.email', @email.val())
       .fail (error) =>
         console.error error
         @showError error?.responseJSON?.message ? error
@@ -95,12 +99,12 @@ class FeedbackFormView extends View
 
   createIssue: (imageUrl) ->
     data =
-      title: @textarea.val()[0..50]
+      title: @feedbackText.val()[0..50]
       labels: 'feedback'
       body: """
-        #{@textarea.val()}
+        #{@feedbackText.val()}
 
-        User: #{process.env['USER']}
+        User: #{@email.val() ? 'unknown'}
         Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
