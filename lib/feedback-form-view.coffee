@@ -14,27 +14,27 @@ module.exports =
 class FeedbackFormView extends View
   @content: ->
     @div class: 'feedback overlay from-top', =>
-      @div class: 'screenshot-status', =>
-        @span class: 'text-info', 'Taking screenshot.'
+      @progress outlet: 'sendingStatus', class: 'sending-status inline-block', max: '100'
 
-      @div class: 'input', =>
+      @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
         @div class: 'inset-panel', =>
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
           @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
-          @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
-          @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
 
-          @div class: 'screenshot', =>
+          @div =>
+            @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
+            @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
+
+          @div =>
             @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox'
             @label for: 'attach-screenshot', "Attach screenshot"
-            @img outlet: 'screenshotImage'
+
           @button outlet: 'sendButton', class: 'btn', 'send'
-          @progress outlet: 'sendingStatus', class: 'sending-status inline-block', max: '100'
 
           @div outlet: 'sendingError', class: 'sending-error'
 
-      @div tabindex: -1, class: 'output', =>
+      @div outlet: 'outputForm', tabindex: -1, class: 'output', =>
         @h1 "Thanks for the feedback!"
         @div =>
           @span "An issue was created "
@@ -42,8 +42,6 @@ class FeedbackFormView extends View
 
   initialize: ->
     atom.workspaceView.on 'core:cancel', => @detach()
-    @attachScreenshot.on 'click', => @updateScreenshot()
-    @attachDebugInfo.on 'click', => @updateDebugInfo()
     @sendButton.on 'click', => @send()
     @on 'feedback:tab', =>
       elements =  @find('input, textarea, button')
@@ -53,47 +51,48 @@ class FeedbackFormView extends View
       elements =  @find('input, textarea, button')
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
-
     @email.val atom.config.get('feedback.email')
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
   send: ->
-    @sendButton.disable()
-    @sendingStatus.show()
     @sendingError.hide()
-    @sendingStatus.attr('value', 0)
+    @sendButton.disable()
+    @inputForm.hide()
+    @sendingStatus.show()
+    @sendingStatus.attr('value', 10)
 
     unless @feedbackText.val()
       @showError("You forgot to include your feedback")
       return
 
-    failureMessage = null
-    Q("start") # Used to catch errors in uploadScreenshot
+    Q("start") # Used to catch errors in first promise
       .then =>
+        @captureScreenshot() if @attachScreenshot.is(":checked")
+      .then (screenshot) =>
         @sendingStatus.attr('value', 50)
-        @uploadScreenshot()
-      .then =>
+        @postScreenshot(screenshot) if screenshot
+      .then (screenshotUrl) =>
+        @sendingStatus.attr('value', 75)
+        @postIssue(screenshotUrl)
+      .then (issueUrl) =>
         @sendingStatus.attr('value', 100)
-        @createIssue(arguments...)
-      .then (url) =>
-        @find('.input').hide()
-        @find('.output').show().focus().on 'blur', => @detach()
-        @issueLink.text url
-        @issueLink.attr('href', url)
+        @sendingStatus.hide()
+        @outputForm.show().focus().on 'blur', => @detach()
+        @issueLink.text issueUrl
+        @issueLink.attr('href', issueUrl)
         atom.config.set('feedback.email', @email.val())
       .fail (error) =>
-        console.error error
         @showError error?.responseJSON?.message ? error
+        console.error error
 
   showError: (message) ->
+    @inputForm.show()
+    @sendingStatus.hide()
     @sendingError.show().text message
     @sendButton.enable()
-    @sendingStatus.hide()
 
-  uploadScreenshot: ->
-    return Q() unless @screenshot
-
+  postScreenshot: (screenshot) ->
     guid = Guid.raw()
     options =
       url: "https://api.github.com/repos/atom/feedback-storage/contents/image-#{guid}.png"
@@ -101,24 +100,26 @@ class FeedbackFormView extends View
       json: true
       body:
         message: "Add image (#{guid})"
-        content: @screenshot.toString('base64')
+        content: screenshot.toString('base64')
 
     @requestViaPromise(options).then ({content}) => content.html_url
 
-  createIssue: (imageUrl) ->
+  postIssue: (imageUrl) ->
     data =
       title: @feedbackText.val()[0..50]
       labels: 'feedback'
       body: """
         #{@feedbackText.val()}
 
-        User: #{@email.val() ? 'unknown'}
+        User: @#{@email.val() ? 'unknown'}
         Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
 
     data.body += "\nScreenshot: [screenshot](#{imageUrl})" if imageUrl?
-    data.body += "\nDebug Info:\n```json\n#{@debugInfo}\n```" if @debugInfo?
+    if @attachDebugInfo.is(":checked")
+      json = JSON.stringify(@captureDebugInfo(), null, 2)
+      data.body += "\nDebug Info:\n```json\n#{json}\n```"
 
     options =
       url: 'https://api.github.com/repos/atom/atom/issues'
@@ -147,39 +148,12 @@ class FeedbackFormView extends View
 
     deferred.promise
 
-  updateScreenshot: ->
-    enabled = @attachScreenshot.is(":checked")
-    @screenshotImage.hide()
-    @screenshot = null
-    return unless enabled
-
-    Q("start")
-      .then =>
-        @captureScreenshot()
-      .then (data) =>
-        @screenshot = data
-        @screenshotImage.show()
-        @screenshotImage[0].src = "data:image/png;base64," + @screenshot.toString('base64')
-      .fail (error) =>
-        @showError.show("Failed to take screenshot")
-
   captureScreenshot: (callback) ->
     deferred = Q.defer()
-    $('.screenshot-status').show()
-    $('.input').hide()
     process.nextTick =>
       atom.getCurrentWindow().capturePage (data) =>
-        $('.screenshot-status').hide()
-        $('.input').show()
         deferred.resolve(data)
     deferred.promise
-
-  updateDebugInfo: ->
-    enabled = @attachDebugInfo.is(":checked")
-    if enabled
-      @debugInfo = JSON.stringify(@captureDebugInfo(), null, 2)
-    else
-      @debugInfo = null
 
   captureDebugInfo: ->
     activeView = atom.workspaceView.getActiveView()

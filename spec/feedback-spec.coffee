@@ -9,7 +9,7 @@ describe "Feedback", ->
     atom.workspaceView = new WorkspaceView
     atom.packages.activatePackage('feedback')
     form = new FeedbackFormView
-    spyOn(form, 'createIssue').andReturn(Q("dumbledore-url"))
+    spyOn(form, 'postIssue').andReturn(Q("dumbledore-url"))
 
 
   it "displays the feedback form", ->
