@@ -18,6 +18,9 @@ class FeedbackFormView extends View
 
       @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
+        @div class: 'details', =>
+          @span "This information will be posted publicly on "
+          @a href: 'https://github.com/atom/atom/issues', 'the Atom repo.'
         @div class: 'inset-panel', =>
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
           @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"

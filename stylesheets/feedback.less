@@ -1,6 +1,10 @@
 @import "ui-variables";
 
 .feedback {
+  a {
+    text-decoration: underline;
+  }
+
   .sending-status {
     display: none;
     text-align: center;
@@ -10,6 +14,14 @@
     padding: 0;
     margin: 0;
     margin-bottom: @component-padding;
+  }
+
+  .details {
+    margin-bottom: @component-padding;
+  }
+
+  ::-webkit-input-placeholder {
+    color: @text-color-subtle;
   }
 
   textarea, input[type=text] {
