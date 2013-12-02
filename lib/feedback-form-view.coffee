@@ -45,6 +45,14 @@ class FeedbackFormView extends View
     @attachScreenshot.on 'click', => @updateScreenshot()
     @attachDebugInfo.on 'click', => @updateDebugInfo()
     @sendButton.on 'click', => @send()
+    @on 'feedback:tab', =>
+      elements =  @find('input, textarea, button')
+      (elements[elements.index(@find(':focus')) + 1] ? @feedbackText).focus()
+
+    @on 'feedback:tab-previous', =>
+      elements =  @find('input, textarea, button')
+      (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
+
 
     @email.val atom.config.get('feedback.email')
     atom.workspaceView.prepend(this)
