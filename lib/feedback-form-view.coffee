@@ -58,6 +58,10 @@ class FeedbackFormView extends View
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
+  detatch: ->
+    @off()
+    super()
+
   send: ->
     @sendingError.hide()
     @sendButton.disable()
@@ -81,10 +85,10 @@ class FeedbackFormView extends View
       .then (issueUrl) =>
         @sendingStatus.attr('value', 100)
         @sendingStatus.hide()
-        @outputForm.show().focus().on 'blur', => @detach()
         @issueLink.text issueUrl
         @issueLink.attr('href', issueUrl)
         atom.config.set('feedback.email', @email.val())
+        @outputForm.show().focus().one 'blur', => @detach()
       .fail (error) =>
         @showError error?.responseJSON?.message ? error
         console.error error
