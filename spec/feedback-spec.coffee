@@ -15,18 +15,17 @@ describe "Feedback", ->
   it "displays the feedback form", ->
     expect(atom.workspaceView.find('.feedback')).toExist()
 
-  it 'remembers the user email', ->
-    expect(form.email.text()).toBe ''
-    form.feedbackText.text('pacman is evil')
-    form.email.text("blinky@pacman.com")
+  it 'remembers the user username', ->
+    expect(form.username.val()).toBe ''
+    form.feedbackText.val('pacman is evil')
+    form.username.val("blinky@pacman.com")
 
     waitsForPromise ->
       form.send()
 
     runs ->
       form = new FeedbackFormView
-      expect(form.email.text()).toBe 'blinky@pacman.com'
-
+      expect(form.username.val()).toBe 'blinky@pacman.com'
 
   describe "When there is no feedback text", ->
     it "displays an error", ->
@@ -52,9 +51,7 @@ describe "Feedback", ->
         spyOn(form, 'requestViaPromise').andCallThrough()
 
       it "posts feedback that includes the screenshot", ->
-        waitsForPromise ->
-          form.attachScreenshot.click()
-          form.updateScreenshot()
+        form.attachScreenshot.click()
 
         waitsForPromise ->
           form.send()
