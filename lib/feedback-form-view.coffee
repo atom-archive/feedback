@@ -23,7 +23,7 @@ class FeedbackFormView extends View
           @a href: 'https://github.com/atom/atom/issues', 'the Atom repo.'
         @div class: 'inset-panel', =>
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
-          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
+          @input outlet: 'username', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
 
           @div =>
             @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
@@ -54,7 +54,7 @@ class FeedbackFormView extends View
       elements =  @find('input, textarea, button')
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
-    @email.val atom.config.get('feedback.email')
+    @username.val atom.config.get('feedback.username')
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
@@ -87,7 +87,7 @@ class FeedbackFormView extends View
         @sendingStatus.hide()
         @issueLink.text issueUrl
         @issueLink.attr('href', issueUrl)
-        atom.config.set('feedback.email', @email.val())
+        atom.config.set('feedback.username', @username.val())
         @outputForm.show().focus().one 'blur', => @detach()
       .fail (error) =>
         @showError error?.responseJSON?.message ? error
@@ -118,7 +118,7 @@ class FeedbackFormView extends View
       body: """
         #{@feedbackText.val()}
 
-        User: @#{@email.val() ? 'unknown'}
+        User: @#{@username.val() ? 'unknown'}
         Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
