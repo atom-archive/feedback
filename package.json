@@ -4,13 +4,7 @@
   "version": "0.9.0",
   "private": true,
   "description": "Popup form for user feedback",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/atom/feedback.git"
-  },
-  "bugs": {
-    "url": "https://github.com/atom/feedback/issues"
-  },
+  "repository": "https://github.com/atom/feedback",
   "engines": {
     "atom": ">27.0"
   },
