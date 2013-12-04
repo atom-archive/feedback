@@ -57,5 +57,4 @@ describe "Feedback", ->
           form.send()
 
         runs ->
-          expect(form.find(':contains(dumbledore-url)')).toExist()
           expect(form.requestViaPromise.calls[0].args[0].body.content).toBe redDot
