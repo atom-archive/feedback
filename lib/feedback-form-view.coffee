@@ -14,7 +14,7 @@ module.exports =
 class FeedbackFormView extends View
   @content: ->
     @div class: 'feedback overlay from-top', =>
-      @progress outlet: 'sendingStatus', class: 'sending-status inline-block', max: '100'
+      @progress outlet: 'sendingStatus', class: 'sending-status', max: '100'
 
       @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
@@ -45,7 +45,7 @@ class FeedbackFormView extends View
       @div outlet: 'outputForm', tabindex: -1, class: 'output', =>
         @h1 "Thanks for the feedback!"
         @div =>
-          @span "An issue was created "
+          @span "An issue was created: "
           @a outlet: 'issueLink', href:""
 
   initialize: ->
