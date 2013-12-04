@@ -18,13 +18,17 @@ class FeedbackFormView extends View
 
       @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
-        @div class: 'details', =>
+        @p =>
           @span "This information will be posted publicly on "
           @a href: 'https://github.com/atom/atom/issues', 'the Atom repo.'
-        @div class: 'inset-panel', =>
+
+        @div class: 'block', =>
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
+
+        @div class: 'block', =>
           @input outlet: 'username', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
 
+        @div class: 'block', =>
           @div =>
             @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
             @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
@@ -33,9 +37,10 @@ class FeedbackFormView extends View
             @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox'
             @label for: 'attach-screenshot', "Attach screenshot"
 
-          @button outlet: 'sendButton', class: 'btn', 'send'
+        @div =>
+          @button outlet: 'sendButton', class: 'btn btn-lg', 'Send Feedback'
 
-          @div outlet: 'sendingError', class: 'sending-error'
+        @div outlet: 'sendingError', class: 'sending-error block'
 
       @div outlet: 'outputForm', tabindex: -1, class: 'output', =>
         @h1 "Thanks for the feedback!"

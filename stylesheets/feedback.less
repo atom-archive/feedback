@@ -14,26 +14,16 @@
     text-align: center;
   }
 
-  h1 {
-    padding: 0;
-    margin: 0;
-    margin-bottom: @component-padding;
-  }
-
-  .details {
-    margin-bottom: @component-padding;
-  }
-
   ::-webkit-input-placeholder {
     color: @text-color-subtle;
   }
 
   textarea, input[type=text] {
     width: 100%;
-    margin-bottom: @component-padding;
     background-color: lighten(@input-background-color, 5%);
     border: 1px solid @input-border-color;
     color: @text-color;
+    padding: @component-padding / 3 @component-padding / 2;
   }
 
   label {
@@ -51,11 +41,6 @@
     display: none;
     font-size: 125%;
     color: @text-color-error;
-  }
-
-  button {
-    width: 100%;
-    font-size: 150%
   }
 
   .output {
