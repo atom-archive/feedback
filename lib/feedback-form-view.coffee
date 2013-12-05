@@ -75,7 +75,7 @@ class FeedbackFormView extends View
     @sendingStatus.show()
     @sendingStatus.attr('value', 10)
 
-    unless @feedbackText.val()
+    unless @feedbackText.val().trim()
       @showError("You forgot to include your feedback")
       return
 
@@ -119,10 +119,10 @@ class FeedbackFormView extends View
 
   postIssue: (imageUrl) ->
     data =
-      title: @feedbackText.val()[0..50]
+      title: @getTruncatedIssueTitle(@feedbackText.val())
       labels: 'feedback'
       body: """
-        #{@feedbackText.val()}
+        #{@feedbackText.val().trim()}
 
         User: @#{@username.val() ? 'unknown'}
         Atom Version: #{atom.getVersion()}
@@ -160,6 +160,16 @@ class FeedbackFormView extends View
         deferred.reject("Failed")
 
     deferred.promise
+
+  getTruncatedIssueTitle: (text) ->
+    MAX = 100
+    lines = text.trim().split('\n')
+    title = lines?[0] or ''
+    if title.length > MAX
+      words = title[0..MAX].split(/[ ]+/g)
+      words.pop() # remove the last word cause it was probably truncated
+      title = words.join(' ').trim()
+    title
 
   captureScreenshot: (callback) ->
     deferred = Q.defer()

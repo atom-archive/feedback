@@ -58,3 +58,28 @@ describe "Feedback", ->
 
         runs ->
           expect(form.requestViaPromise.calls[0].args[0].body.content).toBe redDot
+
+  describe "Issue title creation", ->
+    it 'Creates legit titles', ->
+      title = form.getTruncatedIssueTitle """
+        McSweeney's fap ethical bicycle rights. Banjo Blue Bottle hashtag mustache roof party pork belly. Tumblr meggings raw denim deep v, umami leggings farm-to-table selvage you probably haven't heard of them.
+      """
+      expect(title).toEqual "McSweeney's fap ethical bicycle rights. Banjo Blue Bottle hashtag mustache roof party pork belly."
+
+      title = form.getTruncatedIssueTitle """
+        McSweeney's fap ethical bicycle rights.
+        Banjo Blue Bottle hashtag mustache roof party pork belly. Tumblr meggings raw denim deep v, umami leggings farm-to-table selvage you probably haven't heard of them.
+      """
+      expect(title).toEqual "McSweeney's fap ethical bicycle rights."
+
+      title = form.getTruncatedIssueTitle """
+        McSweeney's fap ethical bicycle rights. Banjo Blue Bottle hashtag mustache roof party pork belly. Tumblr meggings raw denim deep v,
+        umami leggings farm-to-table selvage you probably haven't heard of them.
+      """
+      expect(title).toEqual "McSweeney's fap ethical bicycle rights. Banjo Blue Bottle hashtag mustache roof party pork belly."
+
+      title = form.getTruncatedIssueTitle """
+
+        This is on another line.
+      """
+      expect(title).toEqual "This is on another line."
