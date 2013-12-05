@@ -4,20 +4,19 @@ FeedbackFormView = require './feedback-form-view'
 module.exports =
 class FeedbackStatusView extends View
   @content: ->
-    @div class: 'feedback-status inline-block', =>
-     @span outlet: 'feedbackButton', type: 'button', class: 'icon icon-zap text-error'
+    @span outlet: 'feedbackButton', type: 'button', class: 'feedback-status inline-block icon icon-zap text-warning'
 
   initialize: ->
-    @feedbackButton.on 'click', => new FeedbackFormView()
-    @feedbackButton.setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
+    @on 'click', => new FeedbackFormView()
+    @setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
     @attach()
 
-  attach: ->
-    statusBarRight = atom.workspaceView.find('.status-bar-right')
-    if statusBarRight.length == 0
-      setTimeout((=> @attach()), 100) unless @detached
+  attach: =>
+    statusBar = atom.workspaceView.statusBar
+    if statusBar
+      statusBar.appendRight(this)
     else
-      statusBarRight.append(this)
+      atom.packages.once('activated', @attach) unless @detached
 
   detach: ->
     @detached = true
