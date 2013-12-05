@@ -63,8 +63,9 @@ class FeedbackFormView extends View
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
-  detatch: ->
+  detach: ->
     @off()
+    atom.workspaceView.focus()
     super()
 
   send: ->
