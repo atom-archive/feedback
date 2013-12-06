@@ -14,7 +14,7 @@ module.exports =
 class FeedbackFormView extends View
   @content: ->
     @div class: 'feedback overlay from-top', =>
-      @progress outlet: 'sendingStatus', class: 'sending-status', max: '100'
+      @progress outlet: 'sendingStatus', class: 'sending-status initially-hidden', max: '100'
 
       @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
@@ -27,6 +27,7 @@ class FeedbackFormView extends View
 
         @div class: 'block', =>
           @input outlet: 'username', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
+          @span outlet: 'signedInUsername', type: 'text', class: 'initially-hidden'
 
         @div class: 'block', =>
           @div =>
@@ -40,9 +41,9 @@ class FeedbackFormView extends View
         @div =>
           @button outlet: 'sendButton', class: 'btn btn-lg', 'Send Feedback'
 
-        @div outlet: 'sendingError', class: 'sending-error block'
+        @div outlet: 'sendingError', class: 'sending-error block initially-hidden'
 
-      @div outlet: 'outputForm', tabindex: -1, class: 'output', =>
+      @div outlet: 'outputForm', tabindex: -1, class: 'output initially-hidden', =>
         @h1 "Thanks for the feedback!"
         @div =>
           @span "An issue was created: "
@@ -60,10 +61,7 @@ class FeedbackFormView extends View
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
     @username.val atom.config.get('feedback.username')
-    @fetchUser().then ({login}={}) =>
-      console.log 'login', login, arguments
-      @username.val(login)
-      atom.config.set('feedback.username', login)
+    @fetchUser().then (user) => @setUser(user)
 
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
@@ -120,17 +118,21 @@ class FeedbackFormView extends View
         message: "Add image (#{guid})"
         content: screenshot.toString('base64')
 
-    @requestViaPromise(options).then ({content}) => content.html_url
+    @requestViaPromise(options, atom.getGitHubAuthToken()).then ({content}) => content.html_url
 
   postIssue: (imageUrl) ->
+    token = atom.getGitHubAuthToken()
+
+    user = ''
+    user = "User: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}\n" unless token
+
     data =
       title: @getTruncatedIssueTitle(@feedbackText.val())
       labels: ['feedback']
       body: """
         #{@feedbackText.val().trim()}
 
-        User: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}
-        Atom Version: #{atom.getVersion()}
+        #{user}Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
 
@@ -145,7 +147,12 @@ class FeedbackFormView extends View
       json: true
       body: JSON.stringify(data)
 
-    @requestViaPromise(options).then ({html_url}={}) => html_url
+    @requestViaPromise(options, token).then ({html_url}={}) => html_url
+
+  setUser: (@user) ->
+    atom.config.set('feedback.username', @user.login)
+    @username.hide()
+    @signedInUsername.text("You're signed in as @#{@user.login}").show()
 
   fetchUser: ->
     return unless token = atom.getGitHubAuthToken()
