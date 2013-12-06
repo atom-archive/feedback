@@ -126,7 +126,7 @@ class FeedbackFormView extends View
   postIssue: (imageUrl) ->
     data =
       title: @getTruncatedIssueTitle(@feedbackText.val())
-      labels: 'feedback'
+      labels: ['feedback']
       body: """
         #{@feedbackText.val().trim()}
 
