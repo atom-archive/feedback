@@ -152,7 +152,7 @@ class FeedbackFormView extends View
   setUser: (@user) ->
     atom.config.set('feedback.username', @user.login)
     @username.hide()
-    @signedInUsername.text("You're signed in as @#{@user.login}").show()
+    @signedInUsername.text("GitHub issues will be created as @#{@user.login}").show()
 
   fetchUser: ->
     return unless token = atom.getGitHubAuthToken()
