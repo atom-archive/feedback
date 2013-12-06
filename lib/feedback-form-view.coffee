@@ -5,7 +5,6 @@ path = require 'path'
 temp = require 'temp'
 Q = require 'q'
 Guid = require 'guid'
-keytar = require 'keytar'
 request = require 'request'
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
@@ -148,11 +147,8 @@ class FeedbackFormView extends View
 
     @requestViaPromise(options).then ({html_url}={}) => html_url
 
-  getToken: ->
-    keytar.getPassword('Atom GitHub API Token', 'github')
-
   fetchUser: ->
-    return unless token = @getToken()
+    return unless token = atom.getGitHubAuthToken()
 
     options =
       url: "https://api.github.com/user"
