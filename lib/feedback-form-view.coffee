@@ -145,7 +145,7 @@ class FeedbackFormView extends View
   requestViaPromise: (options) ->
     options.headers ?= {}
     options.headers['Authorization'] = "token #{AtomBotToken}"
-    options.headers['User-Agent'] = "Atom"
+    options.headers['User-Agent'] = navigator.userAgent
 
     deferred = Q.defer()
     request options, (error, response, body) =>
