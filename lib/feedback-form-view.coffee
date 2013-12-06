@@ -5,6 +5,7 @@ path = require 'path'
 temp = require 'temp'
 Q = require 'q'
 Guid = require 'guid'
+keytar = require 'keytar'
 request = require 'request'
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
@@ -60,6 +61,11 @@ class FeedbackFormView extends View
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
     @username.val atom.config.get('feedback.username')
+    @fetchUser().then ({login}={}) =>
+      console.log 'login', login, arguments
+      @username.val(login)
+      atom.config.set('feedback.username', login)
+
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
@@ -75,7 +81,7 @@ class FeedbackFormView extends View
     @sendingStatus.show()
     @sendingStatus.attr('value', 10)
 
-    unless @feedbackText.val()
+    unless @feedbackText.val().trim()
       @showError("You forgot to include your feedback")
       return
 
@@ -119,12 +125,12 @@ class FeedbackFormView extends View
 
   postIssue: (imageUrl) ->
     data =
-      title: @feedbackText.val()[0..50]
-      labels: 'feedback'
+      title: @getTruncatedIssueTitle(@feedbackText.val())
+      labels: ['feedback']
       body: """
-        #{@feedbackText.val()}
+        #{@feedbackText.val().trim()}
 
-        User: @#{@username.val() ? 'unknown'}
+        User: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}
         Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
@@ -142,10 +148,24 @@ class FeedbackFormView extends View
 
     @requestViaPromise(options).then ({html_url}={}) => html_url
 
-  requestViaPromise: (options) ->
+  getToken: ->
+    keytar.getPassword('Atom GitHub API Token', 'github')
+
+  fetchUser: ->
+    return unless token = @getToken()
+
+    options =
+      url: "https://api.github.com/user"
+      json: true
+      headers:
+        'User-Agent': navigator.userAgent
+
+    @requestViaPromise(options, token)
+
+  requestViaPromise: (options, token) ->
     options.headers ?= {}
-    options.headers['Authorization'] = "token #{AtomBotToken}"
-    options.headers['User-Agent'] = "Atom"
+    options.headers['Authorization'] = "token #{token ? AtomBotToken}"
+    options.headers['User-Agent'] = navigator.userAgent
 
     deferred = Q.defer()
     request options, (error, response, body) =>
@@ -160,6 +180,16 @@ class FeedbackFormView extends View
         deferred.reject("Failed")
 
     deferred.promise
+
+  getTruncatedIssueTitle: (text) ->
+    MAX = 100
+    lines = text.trim().split('\n')
+    title = lines?[0] or ''
+    if title.length > MAX
+      words = title[0..MAX].split(/[ ]+/g)
+      words.pop() # remove the last word cause it was probably truncated
+      title = words.join(' ').trim()
+    title
 
   captureScreenshot: (callback) ->
     deferred = Q.defer()
