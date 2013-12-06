@@ -5,6 +5,7 @@ path = require 'path'
 temp = require 'temp'
 Q = require 'q'
 Guid = require 'guid'
+keytar = require 'keytar'
 request = require 'request'
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
@@ -60,6 +61,11 @@ class FeedbackFormView extends View
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
     @username.val atom.config.get('feedback.username')
+    @fetchUser().then ({login}={}) =>
+      console.log 'login', login, arguments
+      @username.val(login)
+      atom.config.set('feedback.username', login)
+
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
@@ -142,9 +148,23 @@ class FeedbackFormView extends View
 
     @requestViaPromise(options).then ({html_url}={}) => html_url
 
-  requestViaPromise: (options) ->
+  getToken: ->
+    keytar.getPassword('Atom GitHub API Token', 'github')
+
+  fetchUser: ->
+    return unless token = @getToken()
+
+    options =
+      url: "https://api.github.com/user"
+      json: true
+      headers:
+        'User-Agent': navigator.userAgent
+
+    @requestViaPromise(options, token)
+
+  requestViaPromise: (options, token) ->
     options.headers ?= {}
-    options.headers['Authorization'] = "token #{AtomBotToken}"
+    options.headers['Authorization'] = "token #{token ? AtomBotToken}"
     options.headers['User-Agent'] = navigator.userAgent
 
     deferred = Q.defer()

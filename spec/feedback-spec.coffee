@@ -3,15 +3,28 @@ Q = require 'q'
 FeedbackFormView = require '../lib/feedback-form-view'
 
 describe "Feedback", ->
-  form = null
+  [form, fetchUserDeferred] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
     atom.packages.activatePackage('feedback')
+
+    fetchUserDeferred = Q.defer()
+    spyOn(FeedbackFormView.prototype, 'fetchUser').andReturn(fetchUserDeferred.promise)
+
     form = new FeedbackFormView
 
   it "displays the feedback form", ->
     expect(atom.workspaceView.find('.feedback')).toExist()
+
+  it "uses the username from the website when logged in", ->
+    expect(form.username.val()).toBe ''
+    fetchUserDeferred.resolve(login: 'omgthatguy')
+
+    waitsForPromise -> fetchUserDeferred.promise
+
+    runs ->
+      expect(form.username.val()).toBe 'omgthatguy'
 
   it 'remembers the user username', ->
     spyOn(form, 'postIssue').andReturn(Q("url"))
