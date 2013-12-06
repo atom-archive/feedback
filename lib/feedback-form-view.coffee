@@ -124,7 +124,7 @@ class FeedbackFormView extends View
       body: """
         #{@feedbackText.val().trim()}
 
-        User: @#{@username.val() ? 'unknown'}
+        User: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}
         Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """

@@ -9,13 +9,12 @@ describe "Feedback", ->
     atom.workspaceView = new WorkspaceView
     atom.packages.activatePackage('feedback')
     form = new FeedbackFormView
-    spyOn(form, 'postIssue').andReturn(Q("dumbledore-url"))
-
 
   it "displays the feedback form", ->
     expect(atom.workspaceView.find('.feedback')).toExist()
 
   it 'remembers the user username', ->
+    spyOn(form, 'postIssue').andReturn(Q("url"))
     expect(form.username.val()).toBe ''
     form.feedbackText.val('pacman is evil')
     form.username.val("blinky@pacman.com")
@@ -38,16 +37,37 @@ describe "Feedback", ->
       form.feedbackText.text("pacman")
 
     it "posts feedback", ->
+      spyOn(form, 'postIssue').andReturn(Q("dumbledore-url"))
+
       waitsForPromise ->
         form.send()
 
       runs ->
         expect(form.find(':contains(dumbledore-url)')).toExist()
 
+    describe "When there is a username", ->
+      beforeEach ->
+        spyOn(form, 'requestViaPromise').andReturn(Q(html_url: "some-url"))
+
+      it "gets rid of the @ symbol", ->
+        form.username.val('@jimbob')
+        waitsForPromise -> form.send()
+
+        runs ->
+          expect(form.requestViaPromise.mostRecentCall.args[0].body).toContain 'User: @jimbob'
+
+      it "adds the @ symbol", ->
+        form.username.val('  jimbob ')
+        waitsForPromise -> form.send()
+
+        runs ->
+          expect(form.requestViaPromise.mostRecentCall.args[0].body).toContain 'User: @jimbob'
+
     describe "When the user attaches a screenshot", ->
       redDot = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
       beforeEach ->
         spyOn(atom.getCurrentWindow(), 'capturePage').andCallFake (cb) -> cb(redDot)
+        spyOn(form, 'postIssue').andReturn(Q("url"))
         spyOn(form, 'requestViaPromise').andCallThrough()
 
       it "posts feedback that includes the screenshot", ->
