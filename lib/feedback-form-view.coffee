@@ -27,7 +27,7 @@ class FeedbackFormView extends View
 
         @div class: 'block', =>
           @input outlet: 'username', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
-          @span outlet: 'signedInUsername', type: 'text', class: 'initially-hidden'
+          @span outlet: 'signedInUsername', type: 'text', class: 'signed-in-user initially-hidden'
 
         @div class: 'block', =>
           @div =>
