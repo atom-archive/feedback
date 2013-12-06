@@ -24,7 +24,7 @@ describe "Feedback", ->
     waitsForPromise -> fetchUserDeferred.promise
 
     runs ->
-      expect(form.username.val()).toBe 'omgthatguy'
+      expect(form.html()).toContain 'signed in as @omgthatguy'
 
   it 'remembers the user username', ->
     spyOn(form, 'postIssue').andReturn(Q("url"))
@@ -60,6 +60,7 @@ describe "Feedback", ->
 
     describe "When there is a username", ->
       beforeEach ->
+        spyOn(atom, 'getGitHubAuthToken').andReturn(null)
         spyOn(form, 'requestViaPromise').andReturn(Q(html_url: "some-url"))
 
       it "gets rid of the @ symbol", ->
