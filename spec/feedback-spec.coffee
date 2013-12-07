@@ -24,7 +24,7 @@ describe "Feedback", ->
     waitsForPromise -> fetchUserDeferred.promise
 
     runs ->
-      expect(form.html()).toContain 'signed in as @omgthatguy'
+      expect(form.html()).toContain '@omgthatguy'
 
   it 'remembers the user username', ->
     spyOn(form, 'postIssue').andReturn(Q("url"))
