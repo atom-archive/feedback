@@ -123,20 +123,18 @@ class FeedbackFormView extends View
   postIssue: (imageUrl) ->
     token = atom.getGitHubAuthToken()
 
-    user = ''
-    user = "User: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}\n" unless token
-
     data =
       title: @getTruncatedIssueTitle(@feedbackText.val())
       labels: ['feedback']
       body: """
         #{@feedbackText.val().trim()}
 
-        #{user}Atom Version: #{atom.getVersion()}
+        Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
 
-    data.body += "\nScreenshot: [screenshot](#{imageUrl})" if imageUrl?
+    data.body += "\nUser: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}" unless token
+
     if @attachDebugInfo.is(":checked")
       json = JSON.stringify(@captureDebugInfo(), null, 2)
       data.body += "\nDebug Info:\n```json\n#{json}\n```"
