@@ -135,6 +135,10 @@ class FeedbackFormView extends View
 
     data.body += "\nUser: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}" unless token
 
+    if imageUrl?
+      imageUrl = imageUrl.replace("/blob/", '/raw/')
+      data.body += "\nScreenshot: \n![screenshot](#{imageUrl})"
+
     if @attachDebugInfo.is(":checked")
       json = JSON.stringify(@captureDebugInfo(), null, 2)
       data.body += "\nDebug Info:\n```json\n#{json}\n```"
