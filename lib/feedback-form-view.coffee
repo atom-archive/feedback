@@ -61,7 +61,7 @@ class FeedbackFormView extends View
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
     @username.val atom.config.get('feedback.username')
-    @fetchUser().then (user) => @setUser(user)
+    @fetchUser().then (user) => @setUser(user) if user
 
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
@@ -157,7 +157,7 @@ class FeedbackFormView extends View
     @signedInUsername.text("GitHub issues will be created as @#{@user.login}").show()
 
   fetchUser: ->
-    return unless token = atom.getGitHubAuthToken()
+    return Q() unless token = atom.getGitHubAuthToken()
 
     options =
       url: "https://api.github.com/user"
