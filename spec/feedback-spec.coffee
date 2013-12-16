@@ -79,13 +79,12 @@ describe "Feedback", ->
 
     describe "When the user attaches a screenshot", ->
       redDot = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
-      beforeEach ->
-        spyOn(atom.getCurrentWindow(), 'capturePage').andCallFake (cb) -> cb(redDot)
-        spyOn(form, 'postIssue').andReturn(Q("url"))
-        spyOn(form, 'requestViaPromise').andCallThrough()
 
       it "posts feedback that includes the screenshot", ->
         form.attachScreenshot.click()
+
+        spyOn(atom.getCurrentWindow(), 'capturePage').andCallFake (cb) -> cb(redDot)
+        spyOn(form, 'requestViaPromise').andReturn(Q({}))
 
         waitsForPromise ->
           form.send()
