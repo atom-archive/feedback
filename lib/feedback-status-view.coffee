@@ -4,10 +4,10 @@ FeedbackFormView = require './feedback-form-view'
 module.exports =
 class FeedbackStatusView extends View
   @content: ->
-    @span outlet: 'feedbackButton', type: 'button', class: 'feedback-status inline-block icon icon-zap text-warning'
+    @a href: '#', class: 'feedback-status inline-block', 'Send Feedback'
 
   initialize: ->
-    @on 'click', => new FeedbackFormView()
+    @on 'click', => new FeedbackFormView(); false
     @setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
     @attach()
 
