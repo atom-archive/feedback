@@ -4,7 +4,7 @@ FeedbackFormView = require './feedback-form-view'
 module.exports =
 class FeedbackStatusView extends View
   @content: ->
-    @a href: '#', class: 'feedback-status inline-block', 'Send Feedback'
+    @a href: '#', class: 'feedback-status inline-block', tabindex: '-1', 'Send Feedback'
 
   initialize: ->
     @on 'click', => new FeedbackFormView(); false
