@@ -9,6 +9,7 @@ request = require 'request'
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
 AtomBotUserId = "1534652"
+StoredFeedbackText = null
 
 module.exports =
 class FeedbackFormView extends View
@@ -64,10 +65,12 @@ class FeedbackFormView extends View
     @username.val atom.config.get('feedback.username')
     @fetchUser().then (user) => @setUser(user) if user
 
+    @feedbackText.val(StoredFeedbackText) if StoredFeedbackText?
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
   detach: ->
+    StoredFeedbackText = @feedbackText.val()
     @unsubscribe()
     atom.workspaceView.focus()
     super()

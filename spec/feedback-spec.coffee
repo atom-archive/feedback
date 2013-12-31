@@ -17,6 +17,12 @@ describe "Feedback", ->
   it "displays the feedback form", ->
     expect(atom.workspaceView.find('.feedback')).toExist()
 
+  it "maintains feedback values between toggles", ->
+    form.feedbackText.val('who wants to live forever')
+    form.trigger 'core:cancel'
+    form = new FeedbackFormView
+    expect(form.feedbackText.val()).toBe 'who wants to live forever'
+
   it "uses the username from the website when logged in", ->
     expect(form.username.val()).toBe ''
     fetchUserDeferred.resolve(login: 'omgthatguy')
