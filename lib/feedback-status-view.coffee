@@ -1,5 +1,4 @@
 {$, View} = require 'atom'
-FeedbackFormView = require './feedback-form-view'
 
 module.exports =
 class FeedbackStatusView extends View
@@ -7,7 +6,9 @@ class FeedbackStatusView extends View
     @a href: '#', class: 'feedback-status inline-block', tabindex: '-1', 'Send Feedback'
 
   initialize: ->
-    @on 'click', => new FeedbackFormView(); false
+    @on 'click', =>
+      atom.workspaceView.trigger 'feedback:report'
+      false
     @setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
     @attach()
 
