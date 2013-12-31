@@ -14,7 +14,7 @@ StoredFeedbackText = null
 module.exports =
 class FeedbackFormView extends View
   @content: ->
-    @div class: 'feedback overlay from-top', =>
+    @div tabindex: -1, class: 'feedback overlay from-top', =>
       @progress outlet: 'sendingStatus', class: 'sending-status initially-hidden', max: '100'
 
       @div outlet: 'inputForm', class: 'input', =>
@@ -51,8 +51,12 @@ class FeedbackFormView extends View
           @a outlet: 'issueLink', href:""
 
   initialize: ->
-    @subscribe atom.workspaceView, 'core:cancel', => @detach()
     @subscribe @sendButton, 'click', => @send()
+    @subscribe atom.workspaceView, 'core:cancel', => @detach()
+    @subscribe this, 'focusout', =>
+      # durring the focusout event body is the active element. Use nextTick to determine what the actual active element will be
+      process.nextTick =>
+        @detach() unless @is(':focus') or @find(':focus').length > 0
 
     @subscribe this, 'feedback:tab', =>
       elements =  @find('input, textarea, button')
