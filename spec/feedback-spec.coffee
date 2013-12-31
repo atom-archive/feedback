@@ -65,7 +65,7 @@ describe "Feedback", ->
 
   describe "When there is feedback text", ->
     beforeEach ->
-      form.feedbackText.text("pacman")
+      form.feedbackText.val("pacman")
 
     it "posts feedback", ->
       spyOn(form, 'postIssue').andReturn(Q("dumbledore-url"))

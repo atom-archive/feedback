@@ -88,7 +88,7 @@ class FeedbackFormView extends View
 
     unless @feedbackText.val().trim()
       @showError("You forgot to include your feedback")
-      return
+      return Q("")
 
     Q("start") # Used to catch errors in first promise
       .then =>
