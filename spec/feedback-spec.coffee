@@ -23,6 +23,18 @@ describe "Feedback", ->
     form = new FeedbackFormView
     expect(form.feedbackText.val()).toBe 'who wants to live forever'
 
+  it "clears feedback values when feedback is sent", ->
+    form.feedbackText.val("text")
+    spyOn(form, 'postIssue').andReturn(Q("url"))
+
+    waitsForPromise ->
+      form.send()
+
+    runs ->
+      atom.workspaceView.trigger 'core:cancel'
+      form = new FeedbackFormView
+      expect(form.feedbackText.val()).toBeFalsy()
+
   it "uses the username from the website when logged in", ->
     expect(form.username.val()).toBe ''
     fetchUserDeferred.resolve(login: 'omgthatguy')

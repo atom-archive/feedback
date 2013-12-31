@@ -65,7 +65,7 @@ class FeedbackFormView extends View
     @username.val atom.config.get('feedback.username')
     @fetchUser().then (user) => @setUser(user) if user
 
-    @feedbackText.val(StoredFeedbackText) if StoredFeedbackText?
+    @feedbackText.val(StoredFeedbackText)
     atom.workspaceView.prepend(this)
     @feedbackText.focus()
 
@@ -96,6 +96,7 @@ class FeedbackFormView extends View
         @sendingStatus.attr('value', 75)
         @postIssue(screenshotUrl)
       .then (issueUrl) =>
+        @feedbackText.val(null)
         @sendingStatus.attr('value', 100)
         @sendingStatus.hide()
         @issueLink.text issueUrl
