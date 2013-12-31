@@ -50,13 +50,14 @@ class FeedbackFormView extends View
           @a outlet: 'issueLink', href:""
 
   initialize: ->
-    atom.workspaceView.on 'core:cancel', => @detach()
-    @sendButton.on 'click', => @send()
-    @on 'feedback:tab', =>
+    @subscribe atom.workspaceView, 'core:cancel', => @detach()
+    @subscribe @sendButton, 'click', => @send()
+
+    @subscribe this, 'feedback:tab', =>
       elements =  @find('input, textarea, button')
       (elements[elements.index(@find(':focus')) + 1] ? @feedbackText).focus()
 
-    @on 'feedback:tab-previous', =>
+    @subscribe this, 'feedback:tab-previous', =>
       elements =  @find('input, textarea, button')
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
@@ -67,7 +68,7 @@ class FeedbackFormView extends View
     @feedbackText.focus()
 
   detach: ->
-    @off()
+    @unsubscribe()
     atom.workspaceView.focus()
     super()
 
