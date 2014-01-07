@@ -1,10 +1,12 @@
 FeedbackStatusView = require './feedback-status-view'
-FeedbackFormView = require './feedback-form-view'
+FeedbackFormView = null
 
 module.exports =
   activate: ->
     @feedbackStatusView = new FeedbackStatusView()
-    atom.workspaceView.command 'feedback:report', => new FeedbackFormView()
+    atom.workspaceView.command 'feedback:report', =>
+      FeedbackFormView ?= require './feedback-form-view'
+      new FeedbackFormView()
 
   deactivate: ->
     @feedbackStatusView.detach()
