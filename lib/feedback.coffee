@@ -9,4 +9,4 @@ module.exports =
       new FeedbackFormView()
 
   deactivate: ->
-    @feedbackStatusView.detach()
+    @feedbackStatusView.remove()

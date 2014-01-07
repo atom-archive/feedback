@@ -17,7 +17,4 @@ class FeedbackStatusView extends View
     if statusBar
       statusBar.appendRight(this)
     else
-      atom.packages.once('activated', @attach) unless @detached
-
-  detach: ->
-    @detached = true
+      @subscribe(atom.packages.once('activated', @attach))
