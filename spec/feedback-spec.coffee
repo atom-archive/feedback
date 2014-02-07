@@ -7,7 +7,6 @@ describe "Feedback", ->
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
-    atom.packages.activatePackage('feedback')
 
     fetchUserDeferred = Q.defer()
     spyOn(FeedbackFormView.prototype, 'fetchUser').andReturn(fetchUserDeferred.promise)
