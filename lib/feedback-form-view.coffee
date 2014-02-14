@@ -5,7 +5,6 @@ path = require 'path'
 temp = require 'temp'
 Q = require 'q'
 Guid = require 'guid'
-request = require 'request'
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
 AtomBotUserId = "1534652"
@@ -27,8 +26,7 @@ class FeedbackFormView extends View
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
 
         @div class: 'block', =>
-          @input outlet: 'username', type: 'text', class: 'native-key-bindings', placeholder: "GitHub username or email"
-          @span outlet: 'signedInUsername', type: 'text', class: 'signed-in-user initially-hidden'
+          @input outlet: 'emailAddress', type: 'text', class: 'native-key-bindings', placeholder: "Email Address"
 
         @div class: 'block', =>
           @div =>
@@ -46,9 +44,6 @@ class FeedbackFormView extends View
 
       @div outlet: 'outputForm', tabindex: -1, class: 'output initially-hidden', =>
         @h1 "Thanks for the feedback!"
-        @div =>
-          @span "An issue was created: "
-          @a outlet: 'issueLink', href:""
 
   initialize: ->
     @subscribe @sendButton, 'click', => @send()
@@ -66,8 +61,7 @@ class FeedbackFormView extends View
       elements =  @find('input, textarea, button')
       (elements[elements.index(@find(':focus')) - 1] ? @sendButton).focus()
 
-    @username.val atom.config.get('feedback.username')
-    @fetchUser().then (user) => @setUser(user) if user
+    @emailAddress.val atom.config.get('feedback.emailAddress')
 
     @feedbackText.val(StoredFeedbackText)
     atom.workspaceView.prepend(this)
@@ -95,17 +89,12 @@ class FeedbackFormView extends View
         @captureScreenshot() if @attachScreenshot.is(":checked")
       .then (screenshot) =>
         @sendingStatus.attr('value', 50)
-        @postScreenshot(screenshot) if screenshot
-      .then (screenshotUrl) =>
-        @sendingStatus.attr('value', 75)
-        @postIssue(screenshotUrl)
-      .then (issueUrl) =>
+        @sendEmail(screenshot)
+      .then =>
         @feedbackText.val(null)
         @sendingStatus.attr('value', 100)
         @sendingStatus.hide()
-        @issueLink.text issueUrl
-        @issueLink.attr('href', issueUrl)
-        atom.config.set('feedback.username', @username.val())
+        atom.config.set('feedback.emailAddress', @emailAddress.val())
         @outputForm.show().focus().one 'blur', => @detach()
       .fail (error) =>
         @showError error?.responseJSON?.message ? error
@@ -117,82 +106,36 @@ class FeedbackFormView extends View
     @sendingError.show().text message
     @sendButton.enable()
 
-  postScreenshot: (screenshot) ->
-    guid = Guid.raw()
-    options =
-      url: "https://api.github.com/repos/atom/feedback-storage/contents/image-#{guid}.png"
-      method: 'PUT'
-      json: true
-      body:
-        message: "Add image (#{guid})"
-        content: screenshot.toString('base64')
+  sendEmail: (screenshot) ->
+    mail = require('nodemailer')
 
-    @requestViaPromise(options, atom.getGitHubAuthToken()).then ({content}) => content.html_url
-
-  postIssue: (imageUrl) ->
-    token = atom.getGitHubAuthToken()
-
-    data =
-      title: @getTruncatedIssueTitle(@feedbackText.val())
-      labels: ['feedback']
-      body: """
+    mailOptions =
+      from: @emailAddress.val().trim()
+      to: 'atom@github.com'
+      subject: "Feedback: " + @feedbackText.val().trim()
+      text: """
         #{@feedbackText.val().trim()}
 
         Atom Version: #{atom.getVersion()}
         User Agent: #{navigator.userAgent}
       """
 
-    data.body += "\nUser: @#{@username.val().trim().replace(/[@]+/g, '') ? 'unknown'}" unless token
-
-    if imageUrl?
-      imageUrl = imageUrl.replace("/blob/", '/raw/')
-      data.body += "\nScreenshot: \n![screenshot](#{imageUrl})"
+    if screenshot
+      mailOptions.attachments = [{
+        fileName: 'screenshot.png'
+        contents: screenshot
+      }]
 
     if @attachDebugInfo.is(":checked")
       json = JSON.stringify(@captureDebugInfo(), null, 2)
-      data.body += "\nDebug Info:\n```json\n#{json}\n```"
-
-    options =
-      url: 'https://api.github.com/repos/atom/atom/issues'
-      method: "POST"
-      json: true
-      body: JSON.stringify(data)
-
-    @requestViaPromise(options, token).then ({html_url}={}) => html_url
-
-  setUser: (@user) ->
-    atom.config.set('feedback.username', @user.login)
-    @username.hide()
-    @signedInUsername.text("GitHub issues will be created as @#{@user.login}").show()
-
-  fetchUser: ->
-    return Q() unless token = atom.getGitHubAuthToken()
-
-    options =
-      url: "https://api.github.com/user"
-      json: true
-      headers:
-        'User-Agent': navigator.userAgent
-
-    @requestViaPromise(options, token)
-
-  requestViaPromise: (options, token) ->
-    options.headers ?= {}
-    options.headers['Authorization'] = "token #{token ? AtomBotToken}"
-    options.headers['User-Agent'] = navigator.userAgent
+      mailOptions.text += "\nDebug Info:\n```json\n#{json}\n```"
 
     deferred = Q.defer()
-    request options, (error, response, body) =>
-      if error
+    mail.createTransport('direct').sendMail mailOptions, (error, response) ->
+      if error?
         deferred.reject(error)
-      else if body
-        if body.errors?
-          deferred.reject(body.errors[0].message)
-        else
-          deferred.resolve(body)
       else
-        deferred.reject("Failed")
-
+        deferred.resolve(response)
     deferred.promise
 
   getTruncatedIssueTitle: (text) ->
