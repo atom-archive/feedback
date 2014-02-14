@@ -27,7 +27,7 @@ class FeedbackFormView extends View
         @div class: 'block', =>
           @div =>
             @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
-            @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
+            @label for: 'attach-debug-info', "Attach debug info (includes text of open editors)"
 
           @div =>
             @input outlet: 'attachScreenshot', id: 'attach-screenshot', type: 'checkbox'
