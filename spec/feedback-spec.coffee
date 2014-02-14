@@ -20,6 +20,7 @@ describe "Feedback", ->
 
   it "clears feedback values when feedback is sent", ->
     form.feedbackText.val("text")
+    form.emailAddress.val("te@s.t")
     spyOn(form, 'sendEmail').andReturn(Q("sent"))
 
     waitsForPromise ->
@@ -52,6 +53,7 @@ describe "Feedback", ->
   describe "When there is feedback text", ->
     beforeEach ->
       form.feedbackText.val("pacman")
+      form.emailAddress.val("pac@m.an")
 
     it "posts feedback", ->
       spyOn(form, 'sendEmail').andReturn(Q("sent"))

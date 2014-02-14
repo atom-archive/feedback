@@ -80,6 +80,10 @@ class FeedbackFormView extends View
       @showError("You forgot to include your feedback")
       return Q("")
 
+    unless @emailAddress.val().trim()
+      @showError("You forgot to include your email address")
+      return Q("")
+
     Q("start") # Used to catch errors in first promise
       .then =>
         @captureScreenshot() if @attachScreenshot.is(":checked")
