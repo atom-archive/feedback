@@ -7,8 +7,6 @@ Q = require 'q'
 Guid = require 'guid'
 mail = require('nodemailer')
 
-AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
-AtomBotUserId = "1534652"
 StoredFeedbackText = null
 
 module.exports =
