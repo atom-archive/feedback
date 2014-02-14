@@ -5,6 +5,7 @@ path = require 'path'
 temp = require 'temp'
 Q = require 'q'
 Guid = require 'guid'
+mail = require('nodemailer')
 
 AtomBotToken = "362295be4c5258d3f7b967bbabae662a455ca2a7"
 AtomBotUserId = "1534652"
@@ -18,9 +19,6 @@ class FeedbackFormView extends View
 
       @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
-        @p =>
-          @span "This information will be posted publicly on "
-          @a href: 'https://github.com/atom/atom/issues', 'the Atom repo.'
 
         @div class: 'block', =>
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
@@ -89,7 +87,7 @@ class FeedbackFormView extends View
         @captureScreenshot() if @attachScreenshot.is(":checked")
       .then (screenshot) =>
         @sendingStatus.attr('value', 50)
-        @sendEmail(screenshot)
+        @sendFeedback(screenshot)
       .then =>
         @feedbackText.val(null)
         @sendingStatus.attr('value', 100)
@@ -106,10 +104,8 @@ class FeedbackFormView extends View
     @sendingError.show().text message
     @sendButton.enable()
 
-  sendEmail: (screenshot) ->
-    mail = require('nodemailer')
-
-    mailOptions =
+  sendFeedback: (screenshot) ->
+    message =
       from: @emailAddress.val().trim()
       to: 'atom@github.com'
       subject: "Feedback: " + @feedbackText.val().trim()
@@ -121,17 +117,20 @@ class FeedbackFormView extends View
       """
 
     if screenshot
-      mailOptions.attachments = [{
+      message.attachments = [{
         fileName: 'screenshot.png'
         contents: screenshot
       }]
 
     if @attachDebugInfo.is(":checked")
       json = JSON.stringify(@captureDebugInfo(), null, 2)
-      mailOptions.text += "\nDebug Info:\n```json\n#{json}\n```"
+      message.text += "\nDebug Info:\n```json\n#{json}\n```"
 
+    @sendEmail(message)
+
+  sendEmail: (message) ->
     deferred = Q.defer()
-    mail.createTransport('direct').sendMail mailOptions, (error, response) ->
+    mail.createTransport('direct').sendMail message, (error, response) ->
       if error?
         deferred.reject(error)
       else
