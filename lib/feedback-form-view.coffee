@@ -152,6 +152,10 @@ class FeedbackFormView extends View
         results[subpath] = @directoryToObject(path.join(filepath, subpath))
       results
     else if stats.isFile()
-      "file: #{Math.round(stats.size / 1024)}kB"
+      kilobytes = Math.round(stats.size / 1024)
+      if kilobytes == 0
+        "file: #{stats.size}B"
+      else
+        "file: #{kilobytes}kB"
     else if stats.isSymbolicLink()
       fs.readlinkSync(filepath)
