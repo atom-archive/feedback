@@ -109,7 +109,7 @@ class FeedbackFormView extends View
     data.debugInfo = JSON.stringify(@captureDebugInfo(), null, 2) if @attachDebugInfo.is(":checked")
 
     options =
-      url: 'http://atom-io.dev/api/feedback'
+      url: 'https://atom.io/api/feedback'
       method: "POST"
       json: true
       body: data
