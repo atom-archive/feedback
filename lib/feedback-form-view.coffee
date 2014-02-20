@@ -16,14 +16,14 @@ class FeedbackFormView extends View
       @div outlet: 'inputForm', class: 'input', =>
         @h1 "Send us feedback"
         @p =>
-          @span "This information will be set to "
+          @span "This information will be sent to "
           @a href: 'mailto:support@atom.io', 'atom@github.com'
 
         @div class: 'block', =>
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
 
         @div class: 'block', =>
-          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "Email address"
+          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "Email Address"
           @span type: 'text', class: 'initially-hidden'
 
         @div class: 'block', =>
