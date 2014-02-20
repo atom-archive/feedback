@@ -106,7 +106,7 @@ class FeedbackFormView extends View
       version: atom.getVersion()
       userAgent: navigator.userAgent
 
-    data.debugInfo = @captureDebugInfo() if @attachDebugInfo.is(":checked")
+    data.debugInfo = JSON.stringify(@captureDebugInfo(), null, 2) if @attachDebugInfo.is(":checked")
 
     options =
       url: 'http://atom-io.dev/api/feedback'
