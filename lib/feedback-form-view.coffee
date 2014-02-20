@@ -40,7 +40,7 @@ class FeedbackFormView extends View
         @h1 "Thanks for the feedback!"
         @div =>
           @span "An email was sent to "
-          @a href: 'mailto:support@atom.io', 'atom@github.com'
+          @a href: 'mailto:atom@github.com', 'atom@github.com'
 
   initialize: ->
     @subscribe @sendButton, 'click', => @send()
