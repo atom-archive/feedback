@@ -5,6 +5,7 @@
   "private": true,
   "description": "Popup form for user feedback",
   "repository": "https://github.com/atom/feedback",
+  "license": "MIT",
   "engines": {
     "atom": ">27.0"
   },
