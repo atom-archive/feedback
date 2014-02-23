@@ -1,10 +1,8 @@
-{_, $, fs, View} = require 'atom'
+fs = require 'fs'
 path = require 'path'
-{Buffer} = require 'buffer'
-{exec} = require 'child_process'
-temp = require 'temp'
+
+{$, View} = require 'atom'
 Q = require 'q'
-Guid = require 'guid'
 request = require 'request'
 
 StoredFeedbackText = null
