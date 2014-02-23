@@ -3,7 +3,7 @@
   "main": "./lib/feedback",
   "version": "0.24.0",
   "private": true,
-  "description": "Popup form for user feedback",
+  "description": "Sends feedback to atom@github.com",
   "repository": "https://github.com/atom/feedback",
   "license": "MIT",
   "engines": {
