@@ -74,7 +74,7 @@ class FeedbackFormView extends View
     @focus()
 
     unless @feedbackText.val().trim()
-      @showError("You forgot to include your feedback")
+      @showError("Please enter your feedback")
       return Q("")
 
     unless @email.val().trim()
