@@ -21,7 +21,7 @@ class FeedbackFormView extends View
           @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
 
         @div class: 'block', =>
-          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "Email Address"
+          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "Email Address (required)"
           @span type: 'text', class: 'initially-hidden'
 
         @div class: 'block', =>
