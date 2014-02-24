@@ -77,6 +77,10 @@ class FeedbackFormView extends View
       @showError("You forgot to include your feedback")
       return Q("")
 
+    unless @email.val().trim()
+      @showError("Please enter your email address")
+      return Q("")
+
     unless /\S+@\S+/.test(@email.val())
       @showError("'#{@email.val()}' is not a valid email address")
       return Q("")
