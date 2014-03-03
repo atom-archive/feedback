@@ -42,6 +42,7 @@ class FeedbackFormView extends View
 
   initialize: ->
     @subscribe @sendButton, 'click', => @send()
+    @subscribe this, 'feedback:send', => @send()
     @subscribe atom.workspaceView, 'core:cancel', => @detach()
     @subscribe this, 'focusout', =>
       # during the focusout event body is the active element. Use nextTick to determine what the actual active element will be

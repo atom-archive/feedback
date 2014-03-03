@@ -1,3 +1,6 @@
+'body .feedback':
+  'cmd-enter': 'feedback:send'
+
 'body .feedback, body .support-info':
   'tab': 'feedback:tab'
   'shift-tab': 'feedback:tab-previous'
