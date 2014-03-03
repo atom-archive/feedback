@@ -21,7 +21,7 @@ class SupportInfoView extends View
           @a href: 'http://github.com/atom/find-and-replace', 'Find And Replace'
           @span " and "
           @a href: 'http://github.com/atom/settings-view', 'Settings'
-          @span ". If you have a bug related to a package, create an issue on its GitHub repo. If you don't whether your problem relates to a package, search "
+          @span ". If you have a bug related to a package, create an issue on its GitHub repo. If you don't know whether your problem relates to a package, search "
           @a href: 'https://atom.io/packages', 'https://atom.io/packages'
           @span " and if a related package is found follow its \"Bug\" link."
 
