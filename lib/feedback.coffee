@@ -5,7 +5,7 @@ module.exports =
   activate: ->
     @feedbackStatusView = new FeedbackStatusView()
     atom.workspaceView.command 'feedback:report', =>
-      SupportInfoView ?= require './feedback-info-view'
+      SupportInfoView ?= require './support-info-view'
       new SupportInfoView()
 
   deactivate: ->
