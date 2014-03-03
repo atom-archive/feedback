@@ -3,7 +3,7 @@
 module.exports =
 class SupportInfoView extends View
   @content: ->
-    @div tabindex: -1, class: 'feedback-info overlay from-top native-key-bindings', =>
+    @div tabindex: -1, class: 'support-info overlay from-top native-key-bindings', =>
       @h1 "Where to get support"
       @ul =>
         @li =>
