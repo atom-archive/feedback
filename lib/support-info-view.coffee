@@ -12,6 +12,11 @@ class SupportInfoView extends View
           @span "."
 
         @li =>
+          @span "Your question might be answered in the "
+          @a href: 'https://atom.io/faq', 'FAQ'
+          @span "."
+
+        @li =>
           @span "Most of Atom's functionality comes from open sourced packages like "
           @a href: 'http://github.com/atom/find-and-replace', 'Find And Replace'
           @span " and "
@@ -19,11 +24,6 @@ class SupportInfoView extends View
           @span ". If you have a bug related to a package, create an issue on its GitHub repo. If you don't whether your problem relates to a package, search "
           @a href: 'https://atom.io/packages', 'https://atom.io/packages'
           @span " and if a related package is found follow its \"Bug\" link."
-
-        @li =>
-          @span "Your question might be answered in the "
-          @a href: 'https://atom.io/faq', 'FAQ'
-          @span "."
 
         @li =>
           @span "If your feedback doesn't fit into any of the above categories then click the Send Feedback button below."
