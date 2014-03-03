@@ -7,23 +7,25 @@ class SupportInfoView extends View
       @h1 "Where to get support"
       @ul =>
         @li =>
-          @span "If you have a feature request please start a Topic on the Atom forum "
-          @a href: 'http://discuss.atom.io', 'http://discuss.atom.io'
-          @span "."
-
-        @li =>
-          @span "Your question might be answered in the "
-          @a href: 'https://atom.io/faq', 'FAQ'
-          @span "."
-
-        @li =>
-          @span "Most of Atom's functionality comes from open sourced packages like "
+          @span class: 'text-highlight', "Found a Bug?"
+          @span " Most of Atom's functionality comes from open sourced packages like "
           @a href: 'http://github.com/atom/find-and-replace', 'Find And Replace'
           @span " and "
           @a href: 'http://github.com/atom/settings-view', 'Settings'
-          @span ". If you have a bug related to a package, create an issue on its GitHub repo. If you don't know whether your problem relates to a package, search "
-          @a href: 'https://atom.io/packages', 'https://atom.io/packages'
-          @span " and if a related package is found follow its \"Bug\" link."
+          @span ". Describe how to reproduce your bug in an issue on the package's GitHub repo. "
+          @a href: 'https://atom.io/packages', 'Search the package list'
+          @span " determine which package to open an issue on."
+
+        @li =>
+          @span class: 'text-highlight', "Feature Request?"
+          @span " Start a Topic on the "
+          @a href: 'http://discuss.atom.io', 'Atom forum'
+          @span "."
+
+        @li =>
+          @span "Check the "
+          @a href: 'https://atom.io/faq', 'FAQ'
+          @span "."
 
         @li =>
           @span "If your feedback doesn't fit into any of the above categories then click the Send Feedback button below."
