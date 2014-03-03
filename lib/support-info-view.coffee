@@ -8,13 +8,13 @@ class SupportInfoView extends View
       @ul =>
         @li =>
           @span class: 'text-highlight', "Found a Bug?"
-          @span " Most of Atom's functionality comes from open sourced packages like "
+          @span " Most of Atom's functionality comes from open source packages (e.g. "
           @a href: 'http://github.com/atom/find-and-replace', 'Find And Replace'
           @span " and "
           @a href: 'http://github.com/atom/settings-view', 'Settings'
-          @span ". Describe how to reproduce your bug in an issue on the package's GitHub repo. "
-          @a href: 'https://atom.io/packages', 'Search the package list'
-          @span " determine which package to open an issue on."
+          @span ".) "
+          @a href: 'https://atom.io/packages', 'Find the related package'
+          @span " and create an issue on the package's GitHub repo that describes how to reproduce the bug."
 
         @li =>
           @span class: 'text-highlight', "Feature Request?"
