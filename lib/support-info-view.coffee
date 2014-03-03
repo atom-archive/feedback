@@ -42,3 +42,10 @@ class SupportInfoView extends View
       # during the focusout event body is the active element. Use nextTick to determine what the actual active element will be
       process.nextTick =>
         @detach() unless @is(':focus') or @find(':focus').length > 0
+
+    @subscribe atom.workspaceView, 'core:cancel', => @detach()
+
+    @subscribe this, 'feedback:tab', =>
+      @sendButton.focus()
+
+    @focus()
