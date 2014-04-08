@@ -18,19 +18,19 @@ class FeedbackFormView extends View
           @a href: 'mailto:support@atom.io', 'atom@github.com'
 
         @div class: 'block', =>
-          @textarea outlet: 'feedbackText', class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
+          @textarea outlet: 'feedbackText', tabIndex: 1, class: 'native-key-bindings', rows: 5, placeholder: "Let us know what we can do better."
 
         @div class: 'block', =>
-          @input outlet: 'email', type: 'text', class: 'native-key-bindings', placeholder: "Email Address (required)"
+          @input outlet: 'email', type: 'text', tabIndex: 2, class: 'native-key-bindings', placeholder: "Email Address (required)"
           @span type: 'text', class: 'initially-hidden'
 
         @div class: 'block', =>
           @div =>
-            @input outlet: 'attachDebugInfo', class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
+            @input outlet: 'attachDebugInfo', tabIndex: 3, class: 'native-key-bindings', id: 'attach-debug-info', type: 'checkbox'
             @label for: 'attach-debug-info', "Attach debug info (includes text of open buffers)"
 
         @div =>
-          @button outlet: 'sendButton', class: 'btn btn-lg', 'Send Feedback'
+          @button outlet: 'sendButton', tabIndex: 4, class: 'btn btn-lg', 'Send Feedback'
 
         @div outlet: 'sendingError', class: 'sending-error block initially-hidden'
 
