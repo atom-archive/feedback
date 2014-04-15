@@ -62,7 +62,6 @@ describe "Feedback", ->
 
     describe "When there is no email", ->
       beforeEach ->
-        spyOn(atom, 'getGitHubAuthToken').andReturn(null)
         spyOn(form, 'requestViaPromise').andReturn(Q(html_url: "some-url"))
 
       it "shows an error", ->
