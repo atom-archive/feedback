@@ -6,7 +6,7 @@ class FeedbackStatusView extends View
     @a href: '#', class: 'feedback-status inline-block', tabindex: '-1', 'Send Feedback'
 
   initialize: ->
-    @on 'click', =>
+    @on 'click', ->
       atom.workspaceView.trigger 'feedback:show'
       false
     @setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")

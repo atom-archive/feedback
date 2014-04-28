@@ -36,7 +36,7 @@ class SupportInfoView extends View
   initialize: ->
     atom.workspaceView.prepend(this)
 
-    @subscribe @sendButton, 'click', =>
+    @subscribe @sendButton, 'click', ->
       FeedbackFormView = require './feedback-form-view'
       new FeedbackFormView()
 

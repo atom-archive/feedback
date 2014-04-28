@@ -124,7 +124,7 @@ class FeedbackFormView extends View
     options.headers['User-Agent'] = navigator.userAgent
 
     deferred = Q.defer()
-    request options, (error, response, body) =>
+    request options, (error, response, body) ->
       if error
         deferred.reject(error)
       else if body
