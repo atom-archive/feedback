@@ -4,7 +4,7 @@ module.exports =
 class SupportInfoView extends View
   @content: ->
     @div tabindex: -1, class: 'support-info overlay from-top native-key-bindings', =>
-      @h1 "Where to get support"
+      @h1 "Send us your feedback"
       @ul =>
         @li =>
           @span class: 'text-highlight', "Found a Bug?"
