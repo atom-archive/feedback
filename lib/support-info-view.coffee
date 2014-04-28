@@ -18,17 +18,15 @@ class SupportInfoView extends View
 
         @li =>
           @span class: 'text-highlight', "Feature Request?"
-          @span " Start a Topic on the "
-          @a href: 'http://discuss.atom.io', 'Atom forum'
+          @span " Start a Topic on "
+          @a href: 'http://discuss.atom.io', 'discuss.atom.io'
           @span "."
 
         @li =>
-          @span "Check the "
-          @a href: 'https://atom.io/faq', 'FAQ'
+          @span class: 'text-highlight', "Sensitive Information?"
+          @span "If you have any concerns you would like to raise privately email"
+          @a href: 'mailto:support@atom.io', 'atom@github.com'
           @span "."
-
-        @li =>
-          @span "If your feedback doesn't fit into any of the above categories then click the Send Feedback button below."
 
   initialize: ->
     atom.workspaceView.prepend(this)
