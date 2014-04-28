@@ -11,6 +11,6 @@ describe "Feedback", ->
       atom.packages.activatePackage('feedback')
 
   it "displays the feedback view", ->
-    expect(atom.workspaceView.find('.support-info')).not.toExist()
+    expect(atom.workspaceView.find('.feedback')).not.toExist()
     atom.workspaceView.trigger('feedback:show')
-    expect(atom.workspaceView.find('.support-info')).toExist()
+    expect(atom.workspaceView.find('.feedback')).toExist()

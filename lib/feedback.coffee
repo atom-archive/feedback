@@ -1,12 +1,12 @@
 FeedbackStatusView = require './feedback-status-view'
-SupportInfoView = null
+FeedbackView = null
 
 module.exports =
   activate: ->
     @feedbackStatusView = new FeedbackStatusView()
     atom.workspaceView.command 'feedback:show', ->
-      SupportInfoView ?= require './support-info-view'
-      new SupportInfoView()
+      FeedbackView ?= require './feedback-view'
+      new FeedbackView()
 
   deactivate: ->
     @feedbackStatusView.remove()

@@ -1,6 +1,6 @@
 'body .feedback':
   'cmd-enter': 'feedback:send'
 
-'body .feedback, body .support-info':
+'body .feedback, body .feedback':
   'tab': 'feedback:tab'
   'shift-tab': 'feedback:tab-previous'
