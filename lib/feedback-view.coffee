@@ -7,7 +7,7 @@ class SupportInfoView extends View
       @h1 "Send us your feedback"
       @ul =>
         @li =>
-          @span class: 'text-highlight', "Found a Bug?"
+          @div class: 'text-highlight', "Found a Bug:"
           @span " Most of Atom's functionality comes from open source packages (e.g. "
           @a href: 'http://github.com/atom/find-and-replace', 'Find And Replace'
           @span " and "
@@ -17,14 +17,14 @@ class SupportInfoView extends View
           @span " and create an issue on the package's GitHub repo that describes how to reproduce the bug."
 
         @li =>
-          @span class: 'text-highlight', "Feature Request?"
+          @div class: 'text-highlight', "Feature Request:"
           @span " Start a Topic on "
           @a href: 'http://discuss.atom.io', 'discuss.atom.io'
           @span "."
 
         @li =>
-          @span class: 'text-highlight', "Sensitive Information?"
-          @span "If you have any concerns you would like to raise privately email"
+          @div class: 'text-highlight', "Sensitive Information:"
+          @span "If you have any concerns you would like to share privately, email"
           @a href: 'mailto:support@atom.io', 'atom@github.com'
           @span "."
 
