@@ -2,7 +2,7 @@
   {
     'label': 'Help'
     'submenu': [
-      { 'label': 'Send Feedback', 'command': 'feedback:report' }
+      { 'label': 'Send Feedback', 'command': 'feedback:show' }
       { type: 'separator' }
     ]
   }

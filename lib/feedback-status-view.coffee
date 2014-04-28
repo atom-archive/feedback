@@ -7,7 +7,7 @@ class FeedbackStatusView extends View
 
   initialize: ->
     @on 'click', =>
-      atom.workspaceView.trigger 'feedback:report'
+      atom.workspaceView.trigger 'feedback:show'
       false
     @setTooltip("Frustrated? Happy? Annoyed? Let us know by clicking here!")
     @attach()
