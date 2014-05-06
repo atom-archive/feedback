@@ -14,8 +14,9 @@ class SupportInfoView extends View
           @a href: 'http://github.com/atom/settings-view', 'Settings'
           @span ".) "
           @a href: 'https://atom.io/packages', 'Find the related package'
-          @span " and create an issue on the package's GitHub repo that describes how to reproduce the bug."
-
+          @span " and create an issue on the package's GitHub repo. Bugs related to Atom's core can be opened on the "
+          @a href: 'http://github.com/atom/atom', 'Atom repo'
+          @span "."
         @li =>
           @div class: 'text-highlight', "Feature Request:"
           @span " Start a Topic on "
