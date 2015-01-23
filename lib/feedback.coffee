@@ -1,12 +1,15 @@
-FeedbackStatusView = require './feedback-status-view'
-FeedbackView = null
+FeedbackStatusElement = require './feedback-status-element'
 
 module.exports =
   activate: ->
-    @feedbackStatusView = new FeedbackStatusView()
-    atom.workspaceView.command 'feedback:show', ->
-      FeedbackView ?= require './feedback-view'
-      new FeedbackView()
+    @subscriptions = atom.commands.add 'atom-workspace', 'feedback:show', ->
+      console.log 'ok'
+
+    atom.packages.once 'activated', =>
+      item = new FeedbackStatusElement()
+      statusBar = document.querySelector("status-bar")
+      @statusBarTile = statusBar.addRightTile({item, priority: 200}) if statusBar?
 
   deactivate: ->
-    @feedbackStatusView.remove()
+    @statusBarTile?.destroy()
+    @subscriptions.dispose()
