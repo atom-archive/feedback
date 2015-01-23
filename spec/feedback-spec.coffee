@@ -1,16 +1,12 @@
-{$, WorkspaceView} = require 'atom'
-Q = require 'q'
-
 describe "Feedback", ->
-  [form] = []
-
+  [workspaceElement] = []
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
-
     waitsForPromise ->
+      workspaceElement = atom.views.getView(atom.workspace)
       atom.packages.activatePackage('feedback')
 
-  it "displays the feedback view", ->
-    expect(atom.workspaceView.find('.feedback')).not.toExist()
-    atom.workspaceView.trigger('feedback:show')
-    expect(atom.workspaceView.find('.feedback')).toExist()
+  it "displays the feedback status item", ->
+    waitsForPromise ->
+      atom.packages.activatePackage('status-bar')
+    runs ->
+      expect(workspaceElement.querySelector('feedback-status')).toExist()
