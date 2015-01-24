@@ -1,7 +1,13 @@
 {CompositeDisposable} = require 'atom'
 
 module.exports =
+  config:
+    alwaysShowInDevMode:
+      type: 'boolean'
+      default: false
+
   activate: ->
+    return unless @shouldShowStatusBarItem()
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
     @subscriptions.add atom.packages.onDidActivateInitialPackages => @addStatusBarItem()
@@ -24,8 +30,19 @@ module.exports =
       @modal.initialize()
     @modal.show()
 
+  shouldShowStatusBarItem: ->
+    userId = localStorage.getItem('metrics.userId')
+    if atom.inDevMode() and atom.config.get('feedback.alwaysShowInDevMode')
+      true
+    else if userId
+      {crc32} = require 'crc'
+      checksum = crc32(userId)
+      checksum % 100 < 5
+    else
+      false
+
   deactivate: ->
-    @subscriptions.dispose()
+    @subscriptions?.dispose()
     @statusBarTile?.destroy()
     @statusBarTile = null
     @modal?.destroy()
