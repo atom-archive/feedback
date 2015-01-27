@@ -21,6 +21,7 @@ module.exports =
     $.ajax(options) if navigator.onLine
 
   defaultParams: ->
+    return unless userId = localStorage.getItem('metrics.userId')
     # https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
     {
       v: 1
