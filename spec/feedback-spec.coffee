@@ -1,6 +1,9 @@
+$ = require 'jquery'
+
 describe "Feedback", ->
   [workspaceElement] = []
   beforeEach ->
+    spyOn($, 'ajax')
     waitsForPromise ->
       workspaceElement = atom.views.getView(atom.workspace)
       atom.packages.activatePackage('feedback')
