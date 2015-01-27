@@ -8,6 +8,10 @@ module.exports =
 
   activate: ->
     return unless @shouldShowStatusBarItem()
+
+    Reporter = require './reporter'
+    Reporter.sendEvent('show-status-bar-link')
+
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
     @subscriptions.add atom.packages.onDidActivateInitialPackages => @addStatusBarItem()
@@ -32,7 +36,7 @@ module.exports =
 
   shouldShowStatusBarItem: ->
     userId = localStorage.getItem('metrics.userId')
-    if atom.inDevMode() and atom.config.get('feedback.alwaysShowInDevMode')
+    if atom.inSpecMode() or (atom.inDevMode() and atom.config.get('feedback.alwaysShowInDevMode'))
       true
     else if userId
       {crc32} = require 'crc'

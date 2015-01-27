@@ -8,6 +8,9 @@ class FeedbackStatusElement extends HTMLElement
     @innerHTML = Template
     atom.tooltips.add this, title: "Help us improve atom by giving feedback"
     @querySelector('a').addEventListener 'click', (e) ->
+      Reporter = require './reporter'
+      Reporter.sendEvent('click-status-bar-link')
+
       e.preventDefault()
       atom.commands.dispatch this, 'feedback:show'
 

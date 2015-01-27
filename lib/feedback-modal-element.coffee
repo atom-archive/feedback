@@ -17,9 +17,15 @@ Template = """
 module.exports =
 class FeedbackModalElement extends HTMLElement
   initialize: ->
+    Reporter = require './reporter'
+
     @innerHTML = Template
-    @querySelector('.btn-primary').addEventListener 'click', => @hide()
-    @querySelector('.btn-cancel').addEventListener 'click', => @hide()
+    @querySelector('.btn-primary').addEventListener 'click', =>
+      Reporter.sendEvent('click-modal-cta')
+      @hide()
+    @querySelector('.btn-cancel').addEventListener 'click', =>
+      Reporter.sendEvent('click-modal-cancel')
+      @hide()
 
   show: ->
     @modalPanel ?= atom.workspace.addModalPanel(item: this)
