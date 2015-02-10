@@ -1,3 +1,7 @@
+FeedbackAPI = require './feedback-api'
+
+SurveyURL = 'https://atom.io/survey'
+
 Template = """
   <h1>Help us improve Atom!</h1>
   <p>
@@ -9,17 +13,17 @@ Template = """
     and what you expect from it.
   </p>
   <div class="btn-toolbar">
-    <a href="#" class="btn btn-primary">Take the 1 minute survey</a>
+    <a href="{{SurveyURL}}" class="btn btn-primary">Take the 1 minute survey</a>
     <a href="#" class="btn btn-cancel">Not right now</a>
   </div>
 """
 
 module.exports =
 class FeedbackModalElement extends HTMLElement
-  initialize: ->
+  initialize: ({feedbackSource}) ->
     Reporter = require './reporter'
 
-    @innerHTML = Template
+    @innerHTML = Template.replace('{{SurveyURL}}', "#{SurveyURL}/#{feedbackSource}/#{FeedbackAPI.getClientID()}")
     @querySelector('.btn-primary').addEventListener 'click', =>
       Reporter.sendEvent('click-modal-cta')
       @hide()
