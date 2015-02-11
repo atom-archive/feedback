@@ -1,6 +1,6 @@
 $ = require 'jquery'
 
-PollInterval = 1000
+PollInterval = 10000
 SurveyURL = 'https://atom.io/survey'
 
 module.exports =
