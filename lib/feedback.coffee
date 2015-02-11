@@ -16,7 +16,7 @@ module.exports =
     @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
       if shouldRequestFeedback
         Reporter = require './reporter'
-        Reporter.sendEvent('did-show-status-bar-link')
+        Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
 
         @subscriptions = new CompositeDisposable
         @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
@@ -24,16 +24,18 @@ module.exports =
         @subscriptions.add atom.packages.onDidActivatePackage (pack) =>
           @addStatusBarItem() if pack.name is 'status-bar'
       else
-        Reporter.sendEvent('did-finish-survey-activate')
+        Reporter.sendEvent(@feedbackSource, 'did-finish-survey-activate')
 
   addStatusBarItem: ->
     return if @statusBarTile?
     FeedbackStatusElement = require './feedback-status-element'
     workspaceElement = atom.views.getView(atom.workspace)
     statusBar = workspaceElement.querySelector("status-bar")
-    @statusBarTile = statusBar.addRightTile
-      priority: 200
-      item: new FeedbackStatusElement()
+
+    item = new FeedbackStatusElement()
+    item.initialize({@feedbackSource})
+
+    @statusBarTile = statusBar.addRightTile {item, priority: 200}
 
   showModal: ->
     unless @modal?
@@ -63,7 +65,7 @@ module.exports =
 
   detectCompletedSurvey: ->
     FeedbackAPI.detectDidCompleteFeedback(@feedbackSource).then =>
-      Reporter.sendEvent('did-finish-survey')
+      Reporter.sendEvent(@feedbackSource, 'did-finish-survey')
       @statusBarTile.destroy()
 
   deactivate: ->

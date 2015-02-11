@@ -2,11 +2,11 @@ $ = require 'jquery'
 querystring = require 'querystring'
 
 module.exports =
-  sendEvent: (name, label, value) ->
+  sendEvent: (action, label, value) ->
     params =
       t: 'event'
       ec: 'survey'
-      ea: name
+      ea: action
       el: label
       ev: value
     @send(params)
