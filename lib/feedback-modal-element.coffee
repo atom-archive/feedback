@@ -1,6 +1,4 @@
-FeedbackAPI = require './feedback-api'
-
-SurveyURL = 'https://atom.io/survey'
+{Emitter} = require 'atom'
 
 Template = """
   <h1>Help us improve Atom!</h1>
@@ -21,15 +19,21 @@ Template = """
 module.exports =
 class FeedbackModalElement extends HTMLElement
   initialize: ({feedbackSource}) ->
+    @emitter = new Emitter
     Reporter = require './reporter'
+    FeedbackAPI = require './feedback-api'
 
-    @innerHTML = Template.replace('{{SurveyURL}}', "#{SurveyURL}/#{feedbackSource}/#{FeedbackAPI.getClientID()}")
+    @innerHTML = Template.replace('{{SurveyURL}}', FeedbackAPI.getSurveyURL(feedbackSource))
     @querySelector('.btn-primary').addEventListener 'click', =>
-      Reporter.sendEvent('click-modal-cta')
+      Reporter.sendEvent('did-click-modal-cta')
+      @emitter.emit('did-start-survey')
       @hide()
     @querySelector('.btn-cancel').addEventListener 'click', =>
-      Reporter.sendEvent('click-modal-cancel')
+      Reporter.sendEvent('did-click-modal-cancel')
       @hide()
+
+  onDidStartSurvey: (callback) ->
+    @emitter.on 'did-start-survey', callback
 
   show: ->
     @modalPanel ?= atom.workspace.addModalPanel(item: this)
@@ -41,6 +45,7 @@ class FeedbackModalElement extends HTMLElement
   destroy: ->
     @modalPanel?.destroy()
     @modalPanel = null
+    @emitter.dispose()
 
 module.exports = document.registerElement 'feedback-modal',
   prototype: FeedbackModalElement.prototype
