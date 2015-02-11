@@ -38,6 +38,7 @@ module.exports =
       FeedbackModalElement = require './feedback-modal-element'
       @modal = new FeedbackModalElement()
       @modal.initialize({@feedbackSource})
+      @modal.onDidStartSurvey => @detectCompletedSurvey()
     @modal.show()
 
   checkShouldRequestFeedback: ->
@@ -57,6 +58,11 @@ module.exports =
           resolve(not didCompleteSurvey)
       else
         resolve(false)
+
+  detectCompletedSurvey: ->
+    FeedbackAPI.detectDidCompleteFeedback(@feedbackSource).then =>
+      Reporter.sendEvent('did-finish-survey')
+      @statusBarTile.destroy()
 
   deactivate: ->
     @subscriptions?.dispose()
