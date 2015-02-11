@@ -1,33 +1,15 @@
-$ = require 'jquery'
-querystring = require 'querystring'
-
 module.exports =
+  queue: []
+
+  setReporter: (@reporter) ->
+    for event in @queue
+      @reporter.sendEvent.apply(@reporter, event)
+    @queue = null
+
   sendEvent: (action, label, value) ->
-    params =
-      t: 'event'
-      ec: 'survey'
-      ea: action
-      el: label
-      ev: value
-    @send(params)
-
-  send: (params) ->
-    $.extend(params, @defaultParams())
-    @request
-      type: 'POST'
-      url: "https://www.google-analytics.com/collect?#{querystring.stringify(params)}"
-
-  request: (options) ->
-    $.ajax(options) if navigator.onLine
-
-  defaultParams: ->
-    return unless userId = localStorage.getItem('metrics.userId')
-    # https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
-    {
-      v: 1
-      tid: "UA-3769691-33"
-      cid: localStorage.getItem('metrics.userId')
-      an: 'atom'
-      av: atom.getVersion()
-      sr: "#{screen.width}x#{screen.height}"
-    }
+    if @reporter
+      console.log 'sendEvent', action, label
+      @reporter.sendEvent('survey', action, label, value)
+    else
+      console.log 'queueEvent', action, label
+      queue.push(['survey', action, label, value])

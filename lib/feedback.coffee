@@ -18,7 +18,7 @@ module.exports =
 
     @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
       if shouldRequestFeedback
-        Reporter = require './reporter'
+        Reporter ?= require './reporter'
         Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
 
         @addStatusBarItem()
@@ -31,6 +31,10 @@ module.exports =
   consumeStatusBar: (statusBar) ->
     @resolveStatusBarPromise(statusBar)
 
+  consumeReporter: (realReporter) ->
+    Reporter ?= require './reporter'
+    Reporter.setReporter(realReporter)
+
   getStatusBar: ->
     @statusBarPromise
 
@@ -39,7 +43,7 @@ module.exports =
     FeedbackStatusElement = require './feedback-status-element'
     workspaceElement = atom.views.getView(atom.workspace)
 
-    @getStatusBar().then (statusBar) ->
+    @getStatusBar().then (statusBar) =>
       item = new FeedbackStatusElement()
       item.initialize({@feedbackSource})
       @statusBarTile = statusBar.addRightTile {item, priority: 200}
