@@ -1,5 +1,6 @@
 {CompositeDisposable} = require 'atom'
 FeedbackAPI = null
+Reporter = null
 
 module.exports =
   config:
@@ -13,16 +14,17 @@ module.exports =
     FeedbackAPI = require './feedback-api'
 
     @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
-      return unless shouldRequestFeedback
+      if shouldRequestFeedback
+        Reporter = require './reporter'
+        Reporter.sendEvent('did-show-status-bar-link')
 
-      Reporter = require './reporter'
-      Reporter.sendEvent('show-status-bar-link')
-
-      @subscriptions = new CompositeDisposable
-      @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
-      @subscriptions.add atom.packages.onDidActivateInitialPackages => @addStatusBarItem()
-      @subscriptions.add atom.packages.onDidActivatePackage (pack) =>
-        @addStatusBarItem() if pack.name is 'status-bar'
+        @subscriptions = new CompositeDisposable
+        @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
+        @subscriptions.add atom.packages.onDidActivateInitialPackages => @addStatusBarItem()
+        @subscriptions.add atom.packages.onDidActivatePackage (pack) =>
+          @addStatusBarItem() if pack.name is 'status-bar'
+      else
+        Reporter.sendEvent('did-finish-survey-activate')
 
   addStatusBarItem: ->
     return if @statusBarTile?
