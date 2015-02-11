@@ -17,14 +17,12 @@ module.exports =
       @resolveStatusBarPromise = resolve
 
     @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
+      Reporter ?= require './reporter'
       if shouldRequestFeedback
-        Reporter ?= require './reporter'
-        Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
-
         @addStatusBarItem()
-
         @subscriptions = new CompositeDisposable
         @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
+        Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
       else
         Reporter.sendEvent(@feedbackSource, 'did-finish-survey-activate')
 
