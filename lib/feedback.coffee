@@ -13,29 +13,36 @@ module.exports =
   activate: ->
     FeedbackAPI = require './feedback-api'
 
+    @statusBarPromise = new Promise (resolve) =>
+      @resolveStatusBarPromise = resolve
+
     @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
       if shouldRequestFeedback
         Reporter = require './reporter'
         Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
 
+        @addStatusBarItem()
+
         @subscriptions = new CompositeDisposable
         @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
-        @subscriptions.add atom.packages.onDidActivateInitialPackages => @addStatusBarItem()
-        @subscriptions.add atom.packages.onDidActivatePackage (pack) =>
-          @addStatusBarItem() if pack.name is 'status-bar'
       else
         Reporter.sendEvent(@feedbackSource, 'did-finish-survey-activate')
+
+  consumeStatusBar: (statusBar) ->
+    @resolveStatusBarPromise(statusBar)
+
+  getStatusBar: ->
+    @statusBarPromise
 
   addStatusBarItem: ->
     return if @statusBarTile?
     FeedbackStatusElement = require './feedback-status-element'
     workspaceElement = atom.views.getView(atom.workspace)
-    statusBar = workspaceElement.querySelector("status-bar")
 
-    item = new FeedbackStatusElement()
-    item.initialize({@feedbackSource})
-
-    @statusBarTile = statusBar.addRightTile {item, priority: 200}
+    @getStatusBar().then (statusBar) ->
+      item = new FeedbackStatusElement()
+      item.initialize({@feedbackSource})
+      @statusBarTile = statusBar.addRightTile {item, priority: 200}
 
   showModal: ->
     unless @modal?
