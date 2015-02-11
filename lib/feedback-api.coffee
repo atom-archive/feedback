@@ -1,9 +1,10 @@
 $ = require 'jquery'
 
-PollInterval = 10000
 SurveyURL = 'https://atom.io/survey'
 
 module.exports =
+  PollInterval: 10000
+
   getClientID: ->
     localStorage.getItem('metrics.userId')
 
@@ -28,7 +29,7 @@ module.exports =
             callback(true)
           else
             detectCompleted(callback)
-      , PollInterval
+      , @PollInterval
 
     new Promise (resolve) =>
       detectCompleted (completed) -> resolve(completed)
