@@ -61,9 +61,9 @@ module.exports =
     new Promise (resolve) =>
       shouldRequest = if atom.inSpecMode() or (atom.inDevMode() and atom.config.get('feedback.alwaysShowInDevMode'))
         true
-      else if userId
+      else if client
         {crc32} = require 'crc'
-        checksum = crc32(userId)
+        checksum = crc32(client + @feedbackSource)
         checksum % 100 < 5
       else
         false
