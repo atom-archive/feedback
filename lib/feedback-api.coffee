@@ -20,9 +20,8 @@ module.exports =
         success: (data) -> resolve(data.completed)
 
   detectDidCompleteFeedback: (source) ->
-    @cancelDidCompleteFeedbackDetection()
-
     detectCompleted = (callback) =>
+      @cancelDidCompleteFeedbackDetection()
       @detectionTimeout = setTimeout =>
         @fetchDidCompleteFeedback(source).then (didCompleteFeedback) ->
           if didCompleteFeedback
@@ -36,3 +35,4 @@ module.exports =
 
   cancelDidCompleteFeedbackDetection: ->
     clearTimeout(@detectionTimeout)
+    @detectionTimeout = null
