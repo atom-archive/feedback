@@ -10,7 +10,7 @@ describe "Feedback", ->
     jasmine.attachToDOM(workspaceElement)
 
     spyOn(Reporter, 'sendEvent')
-    spyOn(FeedbackAPI, 'getClientID').andReturn('1')
+    spyOn(FeedbackAPI, 'getClientID').andReturn('someuser')
     spyOn($, 'ajax').andCallFake (url, {success}) ->
       ajaxSuccess = success
 
@@ -50,6 +50,9 @@ describe "Feedback", ->
       it "displays the modal, and can click ", ->
         workspaceElement.querySelector('feedback-status a').dispatchEvent(new Event('click'))
         expect(workspaceElement.querySelector('feedback-modal')).toBeVisible()
+
+        expect(workspaceElement.querySelector('feedback-modal .btn-primary').href).toContain feedback.feedbackSource
+        expect(workspaceElement.querySelector('feedback-modal .btn-primary').href).toContain 'someuser'
 
         expect(Reporter.sendEvent).toHaveBeenCalledWith(feedback.feedbackSource, 'did-show-status-bar-link')
         expect(Reporter.sendEvent).toHaveBeenCalledWith(feedback.feedbackSource, 'did-click-status-bar-link')
