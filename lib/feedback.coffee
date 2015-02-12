@@ -24,7 +24,7 @@ module.exports =
         @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
         Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
       else
-        Reporter.sendEvent(@feedbackSource, 'did-finish-survey-activate')
+        Reporter.sendEvent(@feedbackSource, 'already-finished-survey-activate')
 
   consumeStatusBar: (statusBar) ->
     @resolveStatusBarPromise(statusBar)
