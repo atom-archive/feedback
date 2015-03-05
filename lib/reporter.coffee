@@ -10,4 +10,4 @@ module.exports =
     if @reporter
       @reporter.sendEvent('survey', action, label, value)
     else
-      queue.push(['survey', action, label, value])
+      @queue.push(['survey', action, label, value])
