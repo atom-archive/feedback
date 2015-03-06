@@ -11,6 +11,8 @@ describe "Feedback", ->
 
     spyOn(Reporter, 'sendEvent')
     spyOn(FeedbackAPI, 'getClientID').andReturn('someuser')
+    spyOn(FeedbackAPI, 'fetchSurveyMetadata').andReturn new Promise (resolve) ->
+      resolve({display_seed: 'none', display_percent: 5})
     spyOn($, 'ajax').andCallFake (url, {success}) ->
       ajaxSuccess = success
 

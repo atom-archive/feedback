@@ -56,21 +56,22 @@ module.exports =
 
   checkShouldRequestFeedback: ->
     client = FeedbackAPI.getClientID()
-    new Promise (resolve) =>
-      shouldRequest = if atom.inSpecMode() or (atom.inDevMode() and atom.config.get('feedback.alwaysShowInDevMode'))
-        true
-      else if client
-        {crc32} = require 'crc'
-        checksum = crc32(client + @feedbackSource)
-        checksum % 100 < 5
-      else
-        false
+    FeedbackAPI.fetchSurveyMetadata(@feedbackSource).then (metadata) =>
+      new Promise (resolve) =>
+        shouldRequest = if atom.inSpecMode() or (atom.inDevMode() and atom.config.get('feedback.alwaysShowInDevMode'))
+          true
+        else if client
+          {crc32} = require 'crc'
+          checksum = crc32(client + @feedbackSource + metadata.display_seed)
+          checksum % 100 < (metadata.display_percent ? 0)
+        else
+          false
 
-      if shouldRequest
-        FeedbackAPI.fetchDidCompleteFeedback(@feedbackSource).then (didCompleteSurvey) ->
-          resolve(not didCompleteSurvey)
-      else
-        resolve(false)
+        if shouldRequest
+          FeedbackAPI.fetchDidCompleteFeedback(@feedbackSource).then (didCompleteSurvey) ->
+            resolve(not didCompleteSurvey)
+        else
+          resolve(false)
 
   detectCompletedSurvey: ->
     FeedbackAPI.detectDidCompleteFeedback(@feedbackSource).then =>

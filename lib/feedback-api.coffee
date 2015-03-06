@@ -11,6 +11,17 @@ module.exports =
   getSurveyURL: (source) ->
     "#{SurveyURL}/#{source}/#{@getClientID()}"
 
+  fetchSurveyMetadata: (source) ->
+    new Promise (resolve) =>
+      url = "https://atom.io/api/feedback/#{source}"
+      $.ajax url,
+        accept: 'application/json'
+        contentType: "application/json"
+        success: (data) -> resolve(data)
+        error: -> resolve
+          display_seed: 'none'
+          display_percent: 0
+
   fetchDidCompleteFeedback: (source) ->
     new Promise (resolve) =>
       url = "https://atom.io/api/feedback/#{source}/#{@getClientID()}"
