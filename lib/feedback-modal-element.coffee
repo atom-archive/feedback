@@ -3,15 +3,14 @@
 Template = """
   <h1>Help us improve Atom!</h1>
   <p>
-    Would you mind taking a minute to answer a few questions
+    Would you mind taking a minute or two to answer a few questions
     about your experience with Atom?
   </p>
   <p>
-    Your feedback will help us improve Atom by understanding how you use Atom
-    and what you expect from it.
+    Your feedback is very important to us!
   </p>
   <div class="btn-toolbar">
-    <a href="{{SurveyURL}}" class="btn btn-primary">Take the 1 minute survey</a>
+    <a href="{{SurveyURL}}" class="btn btn-primary">Take the short survey</a>
     <a href="#" class="btn btn-cancel">Not right now</a>
   </div>
 """
