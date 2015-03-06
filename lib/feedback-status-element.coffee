@@ -11,7 +11,7 @@ class FeedbackStatusElement extends HTMLElement
     atom.tooltips.add this, title: "Help us improve atom by giving feedback"
     @querySelector('a').addEventListener 'click', (e) =>
       Reporter = require './reporter'
-      Reporter.sendEvent(@feedbackSource, 'did-click-status-bar-link')
+      Reporter.sendEvent('did-click-status-bar-link')
 
       e.preventDefault()
       atom.commands.dispatch this, 'feedback:show'

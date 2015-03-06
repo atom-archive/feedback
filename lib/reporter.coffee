@@ -1,5 +1,6 @@
 module.exports =
   queue: []
+  source: 'survey-2015-1'
 
   setReporter: (@reporter) ->
     for event in @queue
@@ -8,6 +9,6 @@ module.exports =
 
   sendEvent: (action, label, value) ->
     if @reporter
-      @reporter.sendEvent('survey', action, label, value)
+      @reporter.sendEvent(@source, action, label, value)
     else
-      @queue.push(['survey', action, label, value])
+      @queue.push([@source, action, label, value])

@@ -22,9 +22,9 @@ module.exports =
         @addStatusBarItem()
         @subscriptions = new CompositeDisposable
         @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
-        Reporter.sendEvent(@feedbackSource, 'did-show-status-bar-link')
+        Reporter.sendEvent('did-show-status-bar-link')
       else
-        Reporter.sendEvent(@feedbackSource, 'already-finished-survey-activate')
+        Reporter.sendEvent('already-finished-survey-activate')
 
   consumeStatusBar: (statusBar) ->
     @resolveStatusBarPromise(statusBar)
@@ -75,7 +75,7 @@ module.exports =
 
   detectCompletedSurvey: ->
     FeedbackAPI.detectDidCompleteFeedback(@feedbackSource).then =>
-      Reporter.sendEvent(@feedbackSource, 'did-finish-survey')
+      Reporter.sendEvent('did-finish-survey')
       @statusBarTile.destroy()
 
   deactivate: ->

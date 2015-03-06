@@ -24,11 +24,11 @@ class FeedbackModalElement extends HTMLElement
 
     @innerHTML = Template.replace('{{SurveyURL}}', FeedbackAPI.getSurveyURL(feedbackSource))
     @querySelector('.btn-primary').addEventListener 'click', =>
-      Reporter.sendEvent(feedbackSource, 'did-click-modal-cta')
+      Reporter.sendEvent('did-click-modal-cta')
       @emitter.emit('did-start-survey')
       @hide()
     @querySelector('.btn-cancel').addEventListener 'click', =>
-      Reporter.sendEvent(feedbackSource, 'did-click-modal-cancel')
+      Reporter.sendEvent('did-click-modal-cancel')
       @hide()
 
   onDidStartSurvey: (callback) ->
