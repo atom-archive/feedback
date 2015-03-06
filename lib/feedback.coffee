@@ -11,18 +11,18 @@ module.exports =
   feedbackSource: 'survey-2015-1'
 
   activate: ->
-    FeedbackAPI = require './feedback-api'
-
     @statusBarPromise = new Promise (resolve) =>
       @resolveStatusBarPromise = resolve
 
-    @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
-      Reporter ?= require './reporter'
-      if shouldRequestFeedback
-        @addStatusBarItem()
-        @subscriptions = new CompositeDisposable
-        @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
-        Reporter.sendEvent('did-show-status-bar-link')
+    process.nextTick =>
+      FeedbackAPI = require './feedback-api'
+      @checkShouldRequestFeedback().then (shouldRequestFeedback) =>
+        Reporter ?= require './reporter'
+        if shouldRequestFeedback
+          @addStatusBarItem()
+          @subscriptions = new CompositeDisposable
+          @subscriptions.add atom.commands.add 'atom-workspace', 'feedback:show', => @showModal()
+          Reporter.sendEvent('did-show-status-bar-link')
 
   consumeStatusBar: (statusBar) ->
     @resolveStatusBarPromise(statusBar)
@@ -67,6 +67,7 @@ module.exports =
 
         if shouldRequest
           FeedbackAPI.fetchDidCompleteFeedback(@feedbackSource).then (didCompleteSurvey) ->
+            Reporter ?= require './reporter'
             Reporter.sendEvent('already-finished-survey') if didCompleteSurvey
             resolve(not didCompleteSurvey)
         else
@@ -74,6 +75,7 @@ module.exports =
 
   detectCompletedSurvey: ->
     FeedbackAPI.detectDidCompleteFeedback(@feedbackSource).then =>
+      Reporter ?= require './reporter'
       Reporter.sendEvent('did-finish-survey')
       @statusBarTile.destroy()
 

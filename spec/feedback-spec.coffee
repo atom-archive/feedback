@@ -35,7 +35,7 @@ describe "Feedback", ->
 
     it "does not display the feedback status item", ->
       expect(workspaceElement.querySelector('feedback-status')).not.toExist()
-      expect(Reporter.sendEvent).toHaveBeenCalledWith('already-finished-survey-activate')
+      expect(Reporter.sendEvent).toHaveBeenCalledWith('already-finished-survey')
 
   describe "when the user has not completed the survey", ->
     beforeEach ->
