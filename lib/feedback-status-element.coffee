@@ -1,5 +1,5 @@
 Template = """
-  <a href="#" class="inline-block">Help Improve Atom</a>
+  <a href="#" class="inline-block">Share Feedback on Atom</a>
 """
 
 module.exports =

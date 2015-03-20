@@ -1,13 +1,13 @@
 {Emitter} = require 'atom'
 
 Template = """
-  <h1>Help us improve Atom!</h1>
+  <h1>Help Improve Atom</h1>
   <p>
-    Would you mind taking a minute or two to answer a few questions
-    about your experience with Atom?
+    Our engineers and designers are interested in how you use Atom and where we
+    can improve the experience.
   </p>
   <p>
-    Your feedback is very important to us!
+    We'll share what we learn in a blog post.
   </p>
   <div class="btn-toolbar">
     <a href="{{SurveyURL}}" class="btn btn-primary">Take the short survey</a>
