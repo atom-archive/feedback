@@ -10,7 +10,7 @@ Template = """
     We'll share what we learn in a blog post.
   </p>
   <div class="btn-toolbar">
-    <a href="{{SurveyURL}}" class="btn btn-primary">Take the 1 minute survey</a>
+    <a href="{{SurveyURL}}" class="btn btn-primary">1-minute survey</a>
     <a href="#" class="btn btn-cancel">Not right now</a>
   </div>
 """
