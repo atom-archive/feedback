@@ -42,7 +42,7 @@ module.exports =
     @getStatusBar().then (statusBar) =>
       item = new FeedbackStatusElement()
       item.initialize({@feedbackSource})
-      @statusBarTile = statusBar.addRightTile {item, priority: 200}
+      @statusBarTile = statusBar.addRightTile {item, priority: -1}
 
   showModal: ->
     unless @modal?

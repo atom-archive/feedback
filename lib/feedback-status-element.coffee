@@ -1,5 +1,5 @@
 Template = """
-  <a href="#" class="inline-block">Share Feedback on Atom</a>
+  <a href="#" class="inline-block">Share Feedback</a>
 """
 
 module.exports =
@@ -9,7 +9,14 @@ class FeedbackStatusElement extends HTMLElement
   attachedCallback: ->
     @innerHTML = Template
     atom.tooltips.add this, title: "Help us improve Atom by giving feedback"
+
+    unless localStorage.getItem("hasClickedSurveyLink-#{@feedbackSource}")
+      @classList.add 'promote'
+
     @querySelector('a').addEventListener 'click', (e) =>
+      localStorage.setItem("hasClickedSurveyLink-#{@feedbackSource}", true)
+      @classList.remove 'promote'
+
       Reporter = require './reporter'
       Reporter.sendEvent('did-click-status-bar-link')
 
