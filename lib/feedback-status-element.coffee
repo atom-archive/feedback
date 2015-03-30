@@ -1,5 +1,5 @@
 Template = """
-  <a href="#" class="inline-block">Share Feedback</a>
+  <a href="#" class="inline-block">1-minute survey</a>
 """
 
 module.exports =
