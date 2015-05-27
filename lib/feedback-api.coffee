@@ -12,7 +12,7 @@ module.exports =
     "#{SurveyURL}/#{source}/#{@getClientID()}"
 
   fetchSurveyMetadata: (source) ->
-    new Promise (resolve) =>
+    new Promise (resolve) ->
       url = "https://atom.io/api/feedback/#{source}"
       $.ajax url,
         accept: 'application/json'
@@ -41,7 +41,7 @@ module.exports =
             detectCompleted(callback)
       , @PollInterval
 
-    new Promise (resolve) =>
+    new Promise (resolve) ->
       detectCompleted (completed) -> resolve(completed)
 
   cancelDidCompleteFeedbackDetection: ->
